@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
-//import com.qualcomm.robotcore.hardware.BNO055IMU;                                       // CHECK IN CASE OF FAILURE
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
 
@@ -35,6 +36,8 @@ public class Hardware {
     // Claw Servos
     public Servo clawServo;
 
+    // IMU
+    public BNO055IMU imu;
 
     public void init(HardwareMap hardwareMap) {
         Assert.assertNotNull(hardwareMap);
@@ -66,13 +69,13 @@ public class Hardware {
         }
 
         // Set up IMU
-//        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, HardwareIDs.IMU);                      // CHECK IN CASE OF FAILURE
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.mode = BNO055IMU.SensorMode.IMU;
-//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.loggingEnabled = false;
-//        imu.initialize(parameters);
+        imu = hardwareMap.get(BNO055IMU.class, HardwareIDs.IMU);                      // CHECK IN CASE OF FAILURE
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
     }
 
     public void initializeSupplementaryMotors(HardwareMap hardwareMap) {

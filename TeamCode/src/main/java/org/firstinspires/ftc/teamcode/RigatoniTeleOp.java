@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
@@ -23,7 +27,7 @@ public class RigatoniTeleOp extends OpMode {
     ElapsedTime sinceStartTime;
 
     // Field oriented
-//    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
+    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
     double initYaw;
     double adjustedYaw;
 
@@ -37,8 +41,8 @@ public class RigatoniTeleOp extends OpMode {
         fieldOriented = true;
 
         // Setup field oriented
-//        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//        initYaw = angles.firstAngle;
+        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        initYaw = angles.firstAngle;
 
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
@@ -96,35 +100,35 @@ public class RigatoniTeleOp extends OpMode {
 
         // Field oriented
         if (fieldOriented) {
-//        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//
-//        adjustedYaw = angles.firstAngle-initYaw;
-//
-//        double zerodYaw = -initYaw+angles.firstAngle;
-//
-//        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
-//
-//        double realTheta;
-//
-//        realTheta = (360 - zerodYaw) + theta;
-//
-//        double power = Math.hypot(x, y);
-//
-//        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-//        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-//        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
-//
-//        leftFrontPower = (power * cos / maxSinCos + turn);
-//        rightFrontPower = (power * sin / maxSinCos - turn);
-//        leftRearPower = (power * sin / maxSinCos + turn);
-//        rightRearPower = (power * cos / maxSinCos - turn);
+        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        adjustedYaw = angles.firstAngle-initYaw;
+
+        double zerodYaw = -initYaw+angles.firstAngle;
+
+        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
+
+        double realTheta;
+
+        realTheta = (360 - zerodYaw) + theta;
+
+        double power = Math.hypot(x, y);
+
+        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
+
+        leftFrontPower = (power * cos / maxSinCos + turn);
+        rightFrontPower = (power * sin / maxSinCos - turn);
+        leftRearPower = (power * sin / maxSinCos + turn);
+        rightRearPower = (power * cos / maxSinCos - turn);
         }
-//        else {
+        else {
         leftFrontPower = y + x + turn;
         leftRearPower = y - x + turn;
         rightFrontPower = y - x - turn;
         rightRearPower = y + x - turn;
-//        }
+        }
 
         if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
             // Find the largest power

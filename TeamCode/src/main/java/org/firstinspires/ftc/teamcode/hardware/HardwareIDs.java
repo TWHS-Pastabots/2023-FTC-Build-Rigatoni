@@ -30,5 +30,5 @@ public class HardwareIDs {
 
 
     // IMU
-    public static final String IMU = "imu1";
+    public static final String IMU = "imu";
 }
