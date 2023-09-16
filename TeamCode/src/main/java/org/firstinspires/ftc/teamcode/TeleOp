@@ -22,6 +22,11 @@ public class RigatoniTeleOp extends OpMode {
 
     ElapsedTime sinceStartTime;
 
+    // Field oriented
+    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
+    double initYaw;
+    double adjustedYaw;
+
     @Override
     public void init()
     {
@@ -31,6 +36,10 @@ public class RigatoniTeleOp extends OpMode {
         speedConstant = FAST_SPEED;
         fineControl = false;
         fieldOriented = true;
+
+        // Setup field oriented
+        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        initYaw = angles.firstAngle;
 
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
@@ -84,16 +93,39 @@ public class RigatoniTeleOp extends OpMode {
         // Mecanum drivecode
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
-        double rx = gamepad1.right_stick_x;
+        double turn = gamepad1.right_stick_x;
 
-        double magnitude = Math.sqrt(Math.pow(y, 2) + Math.pow(x, 2));
-        double direction = Math.atan(x/y); // 0 degrees is straight forwards
+        // Field oriented
+        if(fieldOriented) {
+        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        double leftFrontPower = y + x + rx;
-        double leftRearPower = y - x + rx;
-        double rightFrontPower = y - x - rx;
-        double rightRearPower = y + x - rx;
+        adjustedYaw = angles.firstAngle-initYaw;
 
+        double zerodYaw = -initYaw+angles.firstAngle;
+
+        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
+
+        double realTheta;
+
+        realTheta = (360 - zerodYaw) + theta;
+
+        double power = Math.hypot(x, y);
+
+        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
+
+        double leftFront = (power * cos / maxSinCos + turn);
+        double rightFront = (power * sin / maxSinCos - turn);
+        double leftBack = (power * sin / maxSinCos + turn);
+        double rightBack = (power * cos / maxSinCos - turn);
+        }
+        else {
+            double leftFrontPower = y + x + turn;
+            double leftRearPower = y - x + turn;
+            double rightFrontPower = y - x - turn;
+            double rightRearPower = y + x - turn;
+        }
 
         if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1 ) {
             // Find the largest power

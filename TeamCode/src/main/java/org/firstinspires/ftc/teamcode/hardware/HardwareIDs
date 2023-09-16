@@ -28,4 +28,7 @@ public class HardwareIDs {
     // Claw Servos
     public static final String CLAW_SERVO = "clawServo";
 
+
+    // IMU
+    public static final String IMU = "imu1";
 }
