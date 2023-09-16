@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
-import com.qualcomm.robotcore.hardware.BNO055IMU;                                       // CHECK IN CASE OF FAILURE
+//import com.qualcomm.robotcore.hardware.BNO055IMU;                                       // CHECK IN CASE OF FAILURE
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
 
@@ -66,13 +66,13 @@ public class Hardware {
         }
 
         // Set up IMU
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, HardwareIDs.IMU);                      // CHECK IN CASE OF FAILURE
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-        imu.initialize(parameters);
+//        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, HardwareIDs.IMU);                      // CHECK IN CASE OF FAILURE
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.mode = BNO055IMU.SensorMode.IMU;
+//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.loggingEnabled = false;
+//        imu.initialize(parameters);
     }
 
     public void initializeSupplementaryMotors(HardwareMap hardwareMap) {
