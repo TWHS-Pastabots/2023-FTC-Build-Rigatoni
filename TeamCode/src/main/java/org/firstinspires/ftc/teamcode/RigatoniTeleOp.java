@@ -23,13 +23,12 @@ public class RigatoniTeleOp extends OpMode {
     ElapsedTime sinceStartTime;
 
     // Field oriented
-    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
+//    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
     double initYaw;
     double adjustedYaw;
 
     @Override
-    public void init()
-    {
+    public void init() {
         Assert.assertNotNull(hardwareMap);
         hardware.init(hardwareMap);
 
@@ -38,8 +37,8 @@ public class RigatoniTeleOp extends OpMode {
         fieldOriented = true;
 
         // Setup field oriented
-        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        initYaw = angles.firstAngle;
+//        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        initYaw = angles.firstAngle;
 
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
@@ -62,32 +61,27 @@ public class RigatoniTeleOp extends OpMode {
         // Update modes
 
         // Change slow mode
-        if(gamepad1.cross) {
+        if (gamepad1.cross) {
             speedConstant = SLOW_SPEED;
-        }
-        else if(gamepad1.square) {
+        } else if (gamepad1.square) {
             speedConstant = MID_SPEED;
-        }
-        else if(gamepad1.triangle) {
+        } else if (gamepad1.triangle) {
             speedConstant = FAST_SPEED;
         }
 
         // Change fine control mode
-        if(gampepad1.right_bumper) {
+        if (gamepad1.right_bumper) {
             fineControl = true;
-        }
-        else if(gampepad1.left_bumper) {
+        } else if (gamepad1.left_bumper) {
             fineControl = false;
         }
 
         // Change field oriented mode
-        if(gampepad1.options) {
+        if (gamepad1.options) {
             fieldOriented = true;
-        }
-        else if(gampepad1.share) {
+        } else if (gamepad1.share) {
             fieldOriented = false;
         }
-
 
 
         // Mecanum drivecode
@@ -95,39 +89,44 @@ public class RigatoniTeleOp extends OpMode {
         double x = gamepad1.left_stick_x;
         double turn = gamepad1.right_stick_x;
 
+        double leftFrontPower;
+        double leftRearPower;
+        double rightFrontPower;
+        double rightRearPower;
+
         // Field oriented
-        if(fieldOriented) {
-        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        adjustedYaw = angles.firstAngle-initYaw;
-
-        double zerodYaw = -initYaw+angles.firstAngle;
-
-        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
-
-        double realTheta;
-
-        realTheta = (360 - zerodYaw) + theta;
-
-        double power = Math.hypot(x, y);
-
-        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
-
-        double leftFront = (power * cos / maxSinCos + turn);
-        double rightFront = (power * sin / maxSinCos - turn);
-        double leftBack = (power * sin / maxSinCos + turn);
-        double rightBack = (power * cos / maxSinCos - turn);
+        if (fieldOriented) {
+//        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//
+//        adjustedYaw = angles.firstAngle-initYaw;
+//
+//        double zerodYaw = -initYaw+angles.firstAngle;
+//
+//        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
+//
+//        double realTheta;
+//
+//        realTheta = (360 - zerodYaw) + theta;
+//
+//        double power = Math.hypot(x, y);
+//
+//        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+//        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+//        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
+//
+//        leftFrontPower = (power * cos / maxSinCos + turn);
+//        rightFrontPower = (power * sin / maxSinCos - turn);
+//        leftRearPower = (power * sin / maxSinCos + turn);
+//        rightRearPower = (power * cos / maxSinCos - turn);
         }
-        else {
-            double leftFrontPower = y + x + turn;
-            double leftRearPower = y - x + turn;
-            double rightFrontPower = y - x - turn;
-            double rightRearPower = y + x - turn;
-        }
+//        else {
+        leftFrontPower = y + x + turn;
+        leftRearPower = y - x + turn;
+        rightFrontPower = y - x - turn;
+        rightRearPower = y + x - turn;
+//        }
 
-        if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1 ) {
+        if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
             // Find the largest power
             double max;
             max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
@@ -142,7 +141,7 @@ public class RigatoniTeleOp extends OpMode {
         }
 
         // Non-linear (Quadratic) control for finer adjustments at low speed
-        if(fineControl) {
+        if (fineControl) {
             leftFrontPower = Math.pow(leftFrontPower, 2) * Math.signum(leftFrontPower);
             leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower);
             rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower);
@@ -154,5 +153,5 @@ public class RigatoniTeleOp extends OpMode {
         hardware.leftFront.setPower(leftFrontPower * speedConstant);
         hardware.leftRear.setPower(leftRearPower * speedConstant);
 
-
     }
+}
