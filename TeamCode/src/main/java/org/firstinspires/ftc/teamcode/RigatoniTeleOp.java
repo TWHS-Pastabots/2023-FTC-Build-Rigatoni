@@ -21,7 +21,6 @@ public class RigatoniTeleOp extends OpMode {
     final double SLOW_SPEED = .25;
 
     double speedConstant;
-    boolean fineControl;
     boolean fieldOriented;
 
     ElapsedTime sinceStartTime;
@@ -37,7 +36,6 @@ public class RigatoniTeleOp extends OpMode {
         hardware.init(hardwareMap);
 
         speedConstant = FAST_SPEED;
-        fineControl = false;
         fieldOriented = true;
 
         // Setup field oriented
@@ -71,13 +69,6 @@ public class RigatoniTeleOp extends OpMode {
             speedConstant = MID_SPEED;
         } else if (gamepad1.triangle) {
             speedConstant = FAST_SPEED;
-        }
-
-        // Change fine control mode
-        if (gamepad1.right_bumper) {
-            fineControl = true;
-        } else if (gamepad1.left_bumper) {
-            fineControl = false;
         }
 
         // Change field oriented mode
@@ -145,12 +136,10 @@ public class RigatoniTeleOp extends OpMode {
         }
 
         // Non-linear (Quadratic) control for finer adjustments at low speed
-        if (fineControl) {
-            leftFrontPower = Math.pow(leftFrontPower, 2) * Math.signum(leftFrontPower);
-            leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower);
-            rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower);
-            rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower);
-        }
+        leftFrontPower = Math.pow(leftFrontPower, 2) * Math.signum(leftFrontPower);
+        leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower);
+        rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower);
+        rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower);
 
         hardware.rightRear.setPower(rightRearPower * speedConstant);
         hardware.rightFront.setPower(rightFrontPower * speedConstant);
