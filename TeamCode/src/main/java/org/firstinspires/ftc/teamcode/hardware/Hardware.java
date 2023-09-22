@@ -48,7 +48,6 @@ public class Hardware {
     }
 
     public void initializeDrive(HardwareMap hardwareMap) {
-        driveMotors = new DcMotorEx[]{rightRear, rightFront, leftFront, leftRear};
 
         // Set up drive motors
         rightRear = hardwareMap.get(DcMotorEx.class, HardwareIDs.RIGHT_REAR_MOTOR);
@@ -57,11 +56,10 @@ public class Hardware {
         leftRear = hardwareMap.get(DcMotorEx.class, HardwareIDs.LEFT_REAR_MOTOR);
 
         // Set left motors to reverse
-        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        driveMotors = new DcMotorEx[]{rightRear, rightFront, leftFront, leftRear};
 
         // Set Zero Power Behavior and Initialize Motors
         for(DcMotorEx motor: driveMotors) {
