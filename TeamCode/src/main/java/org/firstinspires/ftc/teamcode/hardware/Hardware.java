@@ -39,6 +39,8 @@ public class Hardware {
 //    // IMU
 //    public BNO055IMU imu;
 
+    public Hardware() {}
+
     public void init(HardwareMap hardwareMap) {
         Assert.assertNotNull(hardwareMap);
         initializeDrive(hardwareMap);

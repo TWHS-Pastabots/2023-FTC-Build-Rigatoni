@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 @TeleOp(name="Rigatoni")
 public class RigatoniTeleOp extends OpMode {
-
     Hardware hardware;
 
     final double FAST_SPEED = 1.0;
@@ -32,6 +31,7 @@ public class RigatoniTeleOp extends OpMode {
 
     @Override
     public void init() {
+        hardware = new Hardware();
         Assert.assertNotNull(hardwareMap);
         hardware.init(hardwareMap);
 
