@@ -25,9 +25,9 @@ public class RigatoniTeleOp extends OpMode {
     ElapsedTime sinceStartTime;
 
     // Field oriented
-    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
-    double initYaw;
-    double adjustedYaw;
+//    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
+//    double initYaw;
+//    double adjustedYaw;
 
     @Override
     public void init() {
@@ -136,15 +136,15 @@ public class RigatoniTeleOp extends OpMode {
         }
 
         // Non-linear (Quadratic) control for finer adjustments at low speed
-        leftFrontPower = Math.pow(leftFrontPower, 2) * Math.signum(leftFrontPower);
-        leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower);
-        rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower);
-        rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower);
+        leftFrontPower = Math.pow(leftFrontPower, 2) * Math.signum(leftFrontPower) * speedConstant;
+        leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower) * speedConstant;
+        rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower) * speedConstant;
+        rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower) * speedConstant;
 
-        hardware.rightRear.setPower(rightRearPower * speedConstant);
-        hardware.rightFront.setPower(rightFrontPower * speedConstant);
-        hardware.leftFront.setPower(leftFrontPower * speedConstant);
-        hardware.leftRear.setPower(leftRearPower * speedConstant);
+        hardware.rightRear.setPower(rightRearPower);
+        hardware.rightFront.setPower(rightFrontPower);
+        hardware.leftFront.setPower(leftFrontPower);
+        hardware.leftRear.setPower(leftRearPower);
 
     }
 }
