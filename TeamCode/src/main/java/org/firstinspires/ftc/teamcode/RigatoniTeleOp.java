@@ -19,6 +19,8 @@ public class RigatoniTeleOp extends OpMode {
     final double MID_SPEED = .5;
     final double SLOW_SPEED = .25;
 
+    final double DPAD_SPEED = .25;
+
     double speedConstant;
     boolean fieldOriented;
 
@@ -140,6 +142,32 @@ public class RigatoniTeleOp extends OpMode {
         leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower) * speedConstant;
         rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower) * speedConstant;
         rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower) * speedConstant;
+
+        if (gamepad1.dpad_up ) {
+            leftFrontPower = DPAD_SPEED;
+            leftRearPower = DPAD_SPEED;
+            rightFrontPower = DPAD_SPEED;
+            rightRearPower = DPAD_SPEED;
+        }
+        else if (gamepad1.dpad_down) {
+            leftFrontPower = -DPAD_SPEED;
+            leftRearPower = -DPAD_SPEED;
+            rightFrontPower = -DPAD_SPEED;
+            rightRearPower = -DPAD_SPEED;
+        }
+        else if (gamepad1.dpad_right) {
+            leftFrontPower = DPAD_SPEED;
+            leftRearPower = -DPAD_SPEED;
+            rightFrontPower = -DPAD_SPEED;
+            rightRearPower = DPAD_SPEED;
+        }
+        else if (gamepad1.dpad_left) {
+            leftFrontPower = -DPAD_SPEED;
+            leftRearPower = DPAD_SPEED;
+            rightFrontPower = DPAD_SPEED;
+            rightRearPower = -DPAD_SPEED;
+
+        }
 
         hardware.rightRear.setPower(rightRearPower);
         hardware.rightFront.setPower(rightFrontPower);
