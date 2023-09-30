@@ -102,18 +102,53 @@ public class RigatoniTeleOp extends OpMode {
 //            fieldOriented = false;
 //        }
 
-
-        // Mecanum drivecode
-        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x;
-        double turn = gamepad1.right_stick_x;
-
         double leftFrontPower;
         double leftRearPower;
         double rightFrontPower;
         double rightRearPower;
 
-        // Field oriented
+        // Run D-pad or joystick movement controls
+        if(gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_right || gamepad1.dpad_left)
+        {
+            //D-pad controls
+            if (gamepad1.dpad_up)
+            {
+                leftFrontPower = DPAD_SPEED;
+                leftRearPower = DPAD_SPEED;
+                rightFrontPower = DPAD_SPEED;
+                rightRearPower = DPAD_SPEED;
+            }
+            else if (gamepad1.dpad_down)
+            {
+                leftFrontPower = -DPAD_SPEED;
+                leftRearPower = -DPAD_SPEED;
+                rightFrontPower = -DPAD_SPEED;
+                rightRearPower = -DPAD_SPEED;
+            }
+            else if (gamepad1.dpad_right)
+            {
+                leftFrontPower = DPAD_SPEED;
+                leftRearPower = -DPAD_SPEED;
+                rightFrontPower = -DPAD_SPEED;
+                rightRearPower = DPAD_SPEED;
+            }
+            else
+            {
+                leftFrontPower = -DPAD_SPEED;
+                leftRearPower = DPAD_SPEED;
+                rightFrontPower = DPAD_SPEED;
+                rightRearPower = -DPAD_SPEED;
+            }
+        }
+        else
+        {
+            // Mecanum drivecode
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double x = gamepad1.left_stick_x;
+            double turn = gamepad1.right_stick_x;
+
+
+            // Field oriented
 ////        if (fieldOriented) {
 ////        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 ////
@@ -139,64 +174,38 @@ public class RigatoniTeleOp extends OpMode {
 //        rightRearPower = (power * cos / maxSinCos - turn);
 //        }
 //        else {
-        leftFrontPower = y + x + turn;
-        leftRearPower = y - x + turn;
-        rightFrontPower = y - x - turn;
-        rightRearPower = y + x - turn;
+            leftFrontPower = y + x + turn;
+            leftRearPower = y - x + turn;
+            rightFrontPower = y - x - turn;
+            rightRearPower = y + x - turn;
 //        }
 
-        if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
-            // Find the largest power
-            double max;
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
-            max = Math.max(Math.abs(rightFrontPower), max);
-            max = Math.max(Math.abs(rightRearPower), max);
+            if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
+                // Find the largest power
+                double max;
+                max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
+                max = Math.max(Math.abs(rightFrontPower), max);
+                max = Math.max(Math.abs(rightRearPower), max);
 
-            // Divide everything by max (it's positive so we don't need to worry about signs)
-            leftFrontPower /= max;
-            leftRearPower /= max;
-            rightFrontPower /= max;
-            rightRearPower /= max;
+                // Divide everything by max (it's positive so we don't need to worry about signs)
+                leftFrontPower /= max;
+                leftRearPower /= max;
+                rightFrontPower /= max;
+                rightRearPower /= max;
+            }
+
+            // Non-linear (Quadratic) control for finer adjustments at low speed
+            leftFrontPower = Math.pow(leftFrontPower, 2) * Math.signum(leftFrontPower) * speedConstant;
+            leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower) * speedConstant;
+            rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower) * speedConstant;
+            rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower) * speedConstant;
         }
 
-        // Non-linear (Quadratic) control for finer adjustments at low speed
-        leftFrontPower = Math.pow(leftFrontPower, 2) * Math.signum(leftFrontPower) * speedConstant;
-        leftRearPower = Math.pow(leftRearPower, 2) * Math.signum(leftRearPower) * speedConstant;
-        rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower) * speedConstant;
-        rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower) * speedConstant;
-
-        //D-pad controls
-        if (gamepad1.dpad_up ) {
-            leftFrontPower = DPAD_SPEED;
-            leftRearPower = DPAD_SPEED;
-            rightFrontPower = DPAD_SPEED;
-            rightRearPower = DPAD_SPEED;
-        }
-        else if (gamepad1.dpad_down) {
-            leftFrontPower = -DPAD_SPEED;
-            leftRearPower = -DPAD_SPEED;
-            rightFrontPower = -DPAD_SPEED;
-            rightRearPower = -DPAD_SPEED;
-        }
-        else if (gamepad1.dpad_right) {
-            leftFrontPower = DPAD_SPEED;
-            leftRearPower = -DPAD_SPEED;
-            rightFrontPower = -DPAD_SPEED;
-            rightRearPower = DPAD_SPEED;
-        }
-        else if (gamepad1.dpad_left) {
-            leftFrontPower = -DPAD_SPEED;
-            leftRearPower = DPAD_SPEED;
-            rightFrontPower = DPAD_SPEED;
-            rightRearPower = -DPAD_SPEED;
-
-        }
-
+        // Set motor power
         hardware.rightRear.setPower(rightRearPower);
         hardware.rightFront.setPower(rightFrontPower);
         hardware.leftFront.setPower(leftFrontPower);
         hardware.leftRear.setPower(leftRearPower);
-
     }
 
     private void intake()
