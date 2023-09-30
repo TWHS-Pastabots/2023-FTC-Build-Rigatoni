@@ -21,20 +21,20 @@ public class Hardware {
     public DcMotorEx[] driveMotors;
 
     // Subsystem Motors
-//    public DcMotorEx arm;
-//    public DcMotorEx intake;
-//    public DcMotorEx flywheel;
+    public DcMotorEx arm;
+    public DcMotorEx intake;
+    public DcMotorEx flywheel;
 //
 //    // Intake Servos
 //    public Servo leftIntakeServo;
 //    public Servo rightIntakeServo;
 //    public Servo intakeDeployServo;
 //    // Launcher Servos
-//    public Servo launcherAimServo;
-//    public Servo launcherTriggerServo;
-//    public Servo launcherReleaseServo;
+    public Servo launcherAimServo;
+    public Servo launcherTriggerServo;
+    public Servo launcherReleaseServo;
 //    // Claw Servos
-//    public Servo clawServo;
+    public Servo clawServo;
 //
 //    // IMU
 //    public BNO055IMU imu;
@@ -44,7 +44,7 @@ public class Hardware {
     public void init(HardwareMap hardwareMap) {
         Assert.assertNotNull(hardwareMap);
         initializeDrive(hardwareMap);
-//        initializeSupplementaryMotors(hardwareMap);
+        initializeSupplementaryMotors(hardwareMap);
     }
 
     public void initializeDrive(HardwareMap hardwareMap) {
@@ -79,50 +79,50 @@ public class Hardware {
     }
 
     public void initializeSupplementaryMotors(HardwareMap hardwareMap) {
-//        // Set up servos
+        // Set up servos
 //        // Set up intake servos
 //        leftIntakeServo = hardwareMap.get(Servo.class, HardwareIDs.LEFT_INTAKE_SERVO);
 //        rightIntakeServo = hardwareMap.get(Servo.class, HardwareIDs.RIGHT_INTAKE_SERVO);
 //        intakeDeployServo = hardwareMap.get(Servo.class, HardwareIDs.INTAKE_DEPLOY_SERVO);
-//
-//        // Set up launcher servos
-//        launcherAimServo = hardwareMap.get(Servo.class, HardwareIDs.AIMING_SERVO);
-//        launcherTriggerServo = hardwareMap.get(Servo.class, HardwareIDs.RING_TRIGGER_SERVO);
-//        launcherReleaseServo = hardwareMap.get(Servo.class, HardwareIDs.LAUNCHER_RELEASE_SERVO);
-//
-//        // Set up claw servos
-//        clawServo = hardwareMap.get(Servo.class, HardwareIDs.CLAW_SERVO);
-//
-//        // Set servo positions
+
+        // Set up launcher servos
+        launcherAimServo = hardwareMap.get(Servo.class, HardwareIDs.AIMING_SERVO);
+        launcherTriggerServo = hardwareMap.get(Servo.class, HardwareIDs.RING_TRIGGER_SERVO);
+        launcherReleaseServo = hardwareMap.get(Servo.class, HardwareIDs.LAUNCHER_RELEASE_SERVO);
+
+        // Set up claw servos
+        clawServo = hardwareMap.get(Servo.class, HardwareIDs.CLAW_SERVO);
+
+        // Set servo positions
 //        // Intake servos
 //        leftIntakeServo.setPosition(0);
 //        rightIntakeServo.setPosition(0);
 //        intakeDeployServo.setPosition(0);
-//        // Launcher servos
-//        launcherAimServo.setPosition(0);
-//        launcherTriggerServo.setPosition(0);
-//        launcherReleaseServo.setPosition(0);
-//        // Claw servos
-//        clawServo.setPosition(0);
-//
-//
-//        //Set up subsystem motors
-//        arm = hardwareMap.get(DcMotorEx.class, HardwareIDs.ARM_MOTOR);
-//        intake = hardwareMap.get(DcMotorEx.class, HardwareIDs.INTAKE_MOTOR);
-//        flywheel = hardwareMap.get(DcMotorEx.class, HardwareIDs.FLYWHEEL_MOTOR);
-//
-//
-//        // Set zero power behavior and initialize subsystem motors
-//        arm.setPower(0);
-//        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
-//        intake.setPower(0);
-//        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
-//        flywheel.setPower(0);
-//        flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // Launcher servos
+        launcherAimServo.setPosition(0);
+        launcherTriggerServo.setPosition(0);
+        launcherReleaseServo.setPosition(0);
+        // Claw servos
+        clawServo.setPosition(0);
+
+
+        //Set up subsystem motors
+        arm = hardwareMap.get(DcMotorEx.class, HardwareIDs.ARM_MOTOR);
+        intake = hardwareMap.get(DcMotorEx.class, HardwareIDs.INTAKE_MOTOR);
+        flywheel = hardwareMap.get(DcMotorEx.class, HardwareIDs.FLYWHEEL_MOTOR);
+
+
+        // Set zero power behavior and initialize subsystem motors
+        arm.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        intake.setPower(0);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        flywheel.setPower(0);
+        flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
