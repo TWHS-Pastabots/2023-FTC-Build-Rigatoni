@@ -238,7 +238,7 @@ public class RigatoniTeleOp extends OpMode {
         {
             controlOverride = true;
         }
-        // If endgame or overriden allow arm use
+        // If endgame or overridden allow arm use
         if(sinceStartTime.time() > 90000 || controlOverride)
         {
             hardware.arm.setPower(gamepad2.left_stick_y * armSpeed);

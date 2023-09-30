@@ -29,7 +29,7 @@ public class Hardware {
 //    public Servo leftIntakeServo;
 //    public Servo rightIntakeServo;
 //    public Servo intakeDeployServo;
-//    // Launcher Servos
+    // Launcher Servos
     public Servo launcherAimServo;
     public Servo launcherTriggerServo;
     public Servo launcherReleaseServo;
@@ -38,7 +38,7 @@ public class Hardware {
 
     // IMU
     public BNO055IMU imu;
-    
+
     public void init(HardwareMap hardwareMap) {
         Assert.assertNotNull(hardwareMap);
         initializeDrive(hardwareMap);
