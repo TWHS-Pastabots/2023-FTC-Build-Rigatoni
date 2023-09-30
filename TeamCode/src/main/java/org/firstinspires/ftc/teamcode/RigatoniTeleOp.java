@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,6 +15,10 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware;
 @TeleOp(name="Rigatoni")
 public class RigatoniTeleOp extends OpMode {
     Hardware hardware;
+    Utilities utilities;
+
+    Gamepad previousGamepad1 = new Gamepad();
+    Gamepad previousGamepad2 = new Gamepad();
 
     final double FAST_SPEED = 1.0;
     final double MID_SPEED = .5;
@@ -23,6 +28,13 @@ public class RigatoniTeleOp extends OpMode {
 
     double speedConstant;
     boolean fieldOriented;
+    boolean controlOverride;
+    boolean intakeOn = false;
+    double intakeSpeed = 1.0;
+    boolean clawOpen = false;
+
+    double armSpeed = 1.0;
+    final double LAUNCHER_AIM_SERVO_ADJUSTMENT = 0.1;
 
     ElapsedTime sinceStartTime;
 
@@ -37,8 +49,11 @@ public class RigatoniTeleOp extends OpMode {
         Assert.assertNotNull(hardwareMap);
         hardware.init(hardwareMap);
 
+        utilities = new Utilities(hardware);
+
         speedConstant = FAST_SPEED;
         // fieldOriented = true;
+        controlOverride = false;
 
         // Setup field oriented
         // angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -57,7 +72,14 @@ public class RigatoniTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        previousGamepad1.copy(gamepad1);
+        previousGamepad2.copy(gamepad2);
+
         drive();
+        intake();
+        launcher();
+        arm();
+
     }
 
     public void drive() {
@@ -143,6 +165,7 @@ public class RigatoniTeleOp extends OpMode {
         rightFrontPower = Math.pow(rightFrontPower, 2) * Math.signum(rightFrontPower) * speedConstant;
         rightRearPower = Math.pow(rightRearPower, 2) * Math.signum(rightRearPower) * speedConstant;
 
+        //D-pad controls
         if (gamepad1.dpad_up ) {
             leftFrontPower = DPAD_SPEED;
             leftRearPower = DPAD_SPEED;
@@ -174,5 +197,47 @@ public class RigatoniTeleOp extends OpMode {
         hardware.leftFront.setPower(leftFrontPower);
         hardware.leftRear.setPower(leftRearPower);
 
+    }
+
+    private void intake()
+    {
+        if(gamepad1.square && !previousGamepad1.square)
+        {
+            intakeOn = !intakeOn;
+        }
+        if(intakeOn)
+        {
+            hardware.intake.setPower(intakeSpeed);
+        }
+    }
+
+    private void launcher()
+    {
+        hardware.flywheel.setPower(gamepad2.left_trigger);
+        if(gamepad2.right_trigger > 0.1)
+        {
+            utilities.shoot();
+        }
+        hardware.launcherAimServo.setPosition(hardware.launcherAimServo.getPosition() + LAUNCHER_AIM_SERVO_ADJUSTMENT * gamepad2.right_stick_x);
+
+    }
+
+    private void arm()
+    {
+        // Prevent accidental arm trigger
+        if(gamepad2.options)
+        {
+            controlOverride = true;
+        }
+        // If endgame or overriden allow arm use
+        if(sinceStartTime.time() > 90000 || controlOverride)
+        {
+            hardware.arm.setPower(gamepad2.left_stick_y * armSpeed);
+            if(gamepad2.triangle && !previousGamepad2.triangle)
+            {
+                clawOpen = !clawOpen;
+                utilities.clawControl(clawOpen);
+            }
+        }
     }
 }
