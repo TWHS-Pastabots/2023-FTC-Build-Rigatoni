@@ -24,8 +24,8 @@ public class Hardware {
     public DcMotorEx arm;
     public DcMotorEx intake;
     public DcMotorEx flywheel;
-//
-//    // Intake Servos
+
+    // Intake Servos
 //    public Servo leftIntakeServo;
 //    public Servo rightIntakeServo;
 //    public Servo intakeDeployServo;
@@ -33,14 +33,12 @@ public class Hardware {
     public Servo launcherAimServo;
     public Servo launcherTriggerServo;
     public Servo launcherReleaseServo;
-//    // Claw Servos
+    // Claw Servos
     public Servo clawServo;
-//
-//    // IMU
-//    public BNO055IMU imu;
 
-    public Hardware() {}
-
+    // IMU
+    public BNO055IMU imu;
+    
     public void init(HardwareMap hardwareMap) {
         Assert.assertNotNull(hardwareMap);
         initializeDrive(hardwareMap);
@@ -69,13 +67,13 @@ public class Hardware {
         }
 
         // Set up IMU
-//        imu = hardwareMap.get(BNO055IMU.class, HardwareIDs.IMU);                      // CHECK IN CASE OF FAILURE
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.mode = BNO055IMU.SensorMode.IMU;
-//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.loggingEnabled = false;
-//        imu.initialize(parameters);
+        imu = hardwareMap.get(BNO055IMU.class, HardwareIDs.IMU);
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
     }
 
     public void initializeSupplementaryMotors(HardwareMap hardwareMap) {

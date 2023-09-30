@@ -39,9 +39,9 @@ public class RigatoniTeleOp extends OpMode {
     ElapsedTime sinceStartTime;
 
     // Field oriented
-//    Orientation angles = new Orientation();                 // CHECK IN CASE OF FAILURE
-//    double initYaw;
-//    double adjustedYaw;
+    Orientation angles = new Orientation();
+    double initYaw;
+    double adjustedYaw;
 
     @Override
     public void init() {
@@ -52,12 +52,12 @@ public class RigatoniTeleOp extends OpMode {
         utilities = new Utilities(hardware);
 
         speedConstant = FAST_SPEED;
-        // fieldOriented = true;
+         fieldOriented = false;
         controlOverride = false;
 
         // Setup field oriented
-        // angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        // initYaw = angles.firstAngle;
+         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+         initYaw = angles.firstAngle;
 
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
@@ -96,11 +96,11 @@ public class RigatoniTeleOp extends OpMode {
         }
 
         // Change field oriented mode
-//        if (gamepad1.options) {
-//            fieldOriented = true;
-//        } else if (gamepad1.share) {
-//            fieldOriented = false;
-//        }
+        if (gamepad1.options) {
+            fieldOriented = true;
+        } else if (gamepad1.share) {
+            fieldOriented = false;
+        }
 
         double leftFrontPower;
         double leftRearPower;
@@ -149,36 +149,36 @@ public class RigatoniTeleOp extends OpMode {
 
 
             // Field oriented
-////        if (fieldOriented) {
-////        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-////
-////        adjustedYaw = angles.firstAngle-initYaw;
-////
-////        double zerodYaw = -initYaw+angles.firstAngle;
-////
-////        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
-////
-////        double realTheta;
-////
-////        realTheta = (360 - zerodYaw) + theta;
-////
-////        double power = Math.hypot(x, y);
-////
-////        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-////        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-////        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
-//
-//        leftFrontPower = (power * cos / maxSinCos + turn);
-//        rightFrontPower = (power * sin / maxSinCos - turn);
-//        leftRearPower = (power * sin / maxSinCos + turn);
-//        rightRearPower = (power * cos / maxSinCos - turn);
-//        }
-//        else {
+        if (fieldOriented) {
+        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        adjustedYaw = angles.firstAngle-initYaw;
+
+        double zerodYaw = -initYaw+angles.firstAngle;
+
+        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
+
+        double realTheta;
+
+        realTheta = (360 - zerodYaw) + theta;
+
+        double power = Math.hypot(x, y);
+
+        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
+
+        leftFrontPower = (power * cos / maxSinCos + turn);
+        rightFrontPower = (power * sin / maxSinCos - turn);
+        leftRearPower = (power * sin / maxSinCos + turn);
+        rightRearPower = (power * cos / maxSinCos - turn);
+        }
+        else {
             leftFrontPower = y + x + turn;
             leftRearPower = y - x + turn;
             rightFrontPower = y - x - turn;
             rightRearPower = y + x - turn;
-//        }
+        }
 
             if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
                 // Find the largest power
