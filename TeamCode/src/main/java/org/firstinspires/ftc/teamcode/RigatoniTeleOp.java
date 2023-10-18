@@ -227,7 +227,16 @@ public class RigatoniTeleOp extends OpMode {
         {
             utilities.shoot();
         }
-        hardware.launcherAimServo.setPosition(hardware.launcherAimServo.getPosition() + LAUNCHER_AIM_SERVO_ADJUSTMENT * gamepad2.right_stick_x);
+        double launcherAimServoPosition = hardware.launcherAimServo.getPosition() + LAUNCHER_AIM_SERVO_ADJUSTMENT * gamepad2.right_stick_x;
+        if(launcherAimServoPosition > 1.0)
+        {
+            launcherAimServoPosition = 1.0;
+        }
+        else if(launcherAimServoPosition < -1.0)
+        {
+            launcherAimServoPosition = -1.0;
+        }
+        hardware.launcherAimServo.setPosition(launcherAimServoPosition);
 
     }
 
