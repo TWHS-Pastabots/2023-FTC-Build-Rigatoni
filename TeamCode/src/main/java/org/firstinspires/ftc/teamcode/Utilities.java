@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 public class Utilities
 {
@@ -7,6 +9,13 @@ public class Utilities
     public Utilities(Hardware hardware)
     {
         this.hardware = hardware;
+    }
+
+    public void wait(int waitTime)
+    {
+        ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        time.reset();
+        while (time.time() < waitTime){}
     }
 
     public void clawControl(boolean shouldOpen)
@@ -19,7 +28,11 @@ public class Utilities
 
     public void shoot()
     {
-        hardware.launcherReleaseServo.setPosition(1.0);
-        hardware.launcherTriggerServo.setPosition(1.0);
+        hardware.launcherReleaseServo.setPosition(1);
+        wait(10);
+        hardware.launcherTriggerServo.setPosition(1);
+        wait(1000);
+        hardware.launcherTriggerServo.setPosition(0);
+        hardware.launcherReleaseServo.setPosition(0);
     }
 }
