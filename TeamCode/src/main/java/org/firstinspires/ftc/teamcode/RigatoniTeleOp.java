@@ -210,13 +210,13 @@ public class RigatoniTeleOp extends OpMode {
 
     private void intake()
     {
-        if(gamepad1.square && !previousGamepad1.square)
-        {
-            intakeOn = !intakeOn;
-        }
-        if(intakeOn)
+        if(gamepad2.square)
         {
             hardware.intake.setPower(intakeSpeed);
+        }
+        if(gamepad2.cross)
+        {
+            hardware.intake.setPower(0.0);
         }
     }
 
