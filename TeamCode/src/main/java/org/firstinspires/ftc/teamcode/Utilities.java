@@ -21,7 +21,7 @@ public class Utilities
     public void clawControl(boolean shouldOpen)
     {
         if(shouldOpen)
-            hardware.clawServo.setPosition(1.0);
+            hardware.clawServo.setPosition(.55);
         else
             hardware.clawServo.setPosition(0.0);
     }

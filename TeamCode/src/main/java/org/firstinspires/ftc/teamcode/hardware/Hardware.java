@@ -101,7 +101,7 @@ public class Hardware {
         launcherTriggerServo.setPosition(0);
         launcherReleaseServo.setPosition(0);
         // Claw servos
-        clawServo.setPosition(0);
+        clawServo.setPosition(.45);
 
 
         //Set up subsystem motors
