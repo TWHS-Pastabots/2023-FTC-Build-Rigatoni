@@ -33,7 +33,7 @@ public class RigatoniTeleOp extends OpMode {
     double intakeSpeed = 1.0;
     boolean clawOpen = false;
 
-    double armSpeed = 1.0;
+    double armSpeed = .8;
     final double LAUNCHER_AIM_SERVO_ADJUSTMENT = 0.1;
 
     ElapsedTime sinceStartTime;
@@ -52,7 +52,7 @@ public class RigatoniTeleOp extends OpMode {
         utilities = new Utilities(hardware);
 
         speedConstant = FAST_SPEED;
-         fieldOriented = false;
+        fieldOriented = false;
         controlOverride = false;
 
         // Setup field oriented
