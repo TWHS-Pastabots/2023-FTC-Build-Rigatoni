@@ -33,7 +33,7 @@ public class RigatoniTeleOp extends OpMode {
     double intakeSpeed = 1.0;
     boolean clawOpen = false;
 
-    double armSpeed = .8;
+    double armSpeed = 1;
     final double LAUNCHER_AIM_SERVO_ADJUSTMENT = 0.1;
 
     ElapsedTime sinceStartTime;
@@ -251,10 +251,13 @@ public class RigatoniTeleOp extends OpMode {
         if(sinceStartTime.time() > 90000 || controlOverride)
         {
             hardware.arm.setPower(gamepad2.left_stick_y * armSpeed);
-            if(gamepad2.triangle && !previousGamepad2.triangle)
+            if(gamepad2.triangle)
             {
-                clawOpen = !clawOpen;
-                utilities.clawControl(clawOpen);
+                hardware.clawServo.setPosition(1); //open
+            }
+            if(gamepad2.circle)
+            {
+                hardware.clawServo.setPosition(0); //closed
             }
         }
     }
