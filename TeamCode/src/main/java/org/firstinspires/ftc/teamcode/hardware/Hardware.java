@@ -25,10 +25,6 @@ public class Hardware {
     public DcMotorEx intake;
     public DcMotorEx flywheel;
 
-    // Intake Servos
-//    public Servo leftIntakeServo;
-//    public Servo rightIntakeServo;
-//    public Servo intakeDeployServo;
     // Launcher Servos
     public Servo launcherAimServo;
     public Servo launcherTriggerServo;
@@ -78,10 +74,6 @@ public class Hardware {
 
     public void initializeSupplementaryMotors(HardwareMap hardwareMap) {
         // Set up servos
-//        // Set up intake servos
-//        leftIntakeServo = hardwareMap.get(Servo.class, HardwareIDs.LEFT_INTAKE_SERVO);
-//        rightIntakeServo = hardwareMap.get(Servo.class, HardwareIDs.RIGHT_INTAKE_SERVO);
-//        intakeDeployServo = hardwareMap.get(Servo.class, HardwareIDs.INTAKE_DEPLOY_SERVO);
 
         // Set up launcher servos
         launcherAimServo = hardwareMap.get(Servo.class, HardwareIDs.AIMING_SERVO);
@@ -92,16 +84,13 @@ public class Hardware {
         clawServo = hardwareMap.get(Servo.class, HardwareIDs.CLAW_SERVO);
 
         // Set servo positions
-//        // Intake servos
-//        leftIntakeServo.setPosition(0);
-//        rightIntakeServo.setPosition(0);
-//        intakeDeployServo.setPosition(0);
+
         // Launcher servos
         launcherAimServo.setPosition(0);
         launcherTriggerServo.setPosition(0);
         launcherReleaseServo.setPosition(0);
         // Claw servos
-        clawServo.setPosition(0);
+        clawServo.setPosition(0); //closed
 
 
         //Set up subsystem motors

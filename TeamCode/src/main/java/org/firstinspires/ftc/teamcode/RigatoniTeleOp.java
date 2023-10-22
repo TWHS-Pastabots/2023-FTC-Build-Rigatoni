@@ -250,7 +250,15 @@ public class RigatoniTeleOp extends OpMode {
         // If endgame or overridden allow arm use
         if(sinceStartTime.time() > 90000 || controlOverride)
         {
-            hardware.arm.setPower(gamepad2.left_stick_y * armSpeed);
+            if(Math.abs(gamepad2.left_stick_y) > 0.05) //Setting deadzone for arm breaking
+            {
+                hardware.arm.setPower(-gamepad2.left_stick_y * armSpeed);
+            }
+            else
+            {
+                hardware.arm.setPower(0);
+            }
+
             if(gamepad2.triangle)
             {
                 hardware.clawServo.setPosition(1); //open
