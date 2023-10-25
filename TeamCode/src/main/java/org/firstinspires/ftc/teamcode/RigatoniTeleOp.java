@@ -20,10 +20,10 @@ public class RigatoniTeleOp extends OpMode {
     Gamepad previousGamepad1 = new Gamepad();
     Gamepad previousGamepad2 = new Gamepad();
 
+    //Drivetrain speeds
     final double FAST_SPEED = 1.0;
     final double MID_SPEED = .5;
     final double SLOW_SPEED = .25;
-
     final double DPAD_SPEED = .25;
 
     double speedConstant;
@@ -35,6 +35,14 @@ public class RigatoniTeleOp extends OpMode {
 
     double armSpeed = 1;
     final double LAUNCHER_AIM_SERVO_ADJUSTMENT = 0.1;
+
+    final double FLYWHEEL_FAST_CAP = 1;
+
+    final double FLYWHEEL_SLOW_CAP = .4;
+
+    double flywheelSpeed = 1.0;
+
+    ElapsedTime flywheelTime;
 
     ElapsedTime sinceStartTime;
 
@@ -68,6 +76,7 @@ public class RigatoniTeleOp extends OpMode {
         telemetry.addData("Status:: ", "Started");
         telemetry.update();
         sinceStartTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        flywheelTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     }
 
     @Override
@@ -222,7 +231,17 @@ public class RigatoniTeleOp extends OpMode {
 
     private void launcher()
     {
-        hardware.flywheel.setPower(gamepad2.left_trigger);
+        //Launcher
+        if(gamepad2.dpad_up && flywheelTime.time() >= 250)
+        {
+            flywheelSpeed = Math.max(flywheelSpeed + 0.05, FLYWHEEL_SLOW_CAP);
+        }
+        else if(gamepad2.dpad_down && flywheelTime.time() >= 250)
+        {
+            flywheelSpeed = Math.min(flywheelSpeed - 0.05, FLYWHEEL_FAST_CAP);
+        }
+        hardware.flywheel.setPower(gamepad2.left_trigger * flywheelSpeed);
+
         if(gamepad2.right_trigger > 0.1)
         {
             utilities.shoot();
@@ -237,7 +256,6 @@ public class RigatoniTeleOp extends OpMode {
             launcherAimServoPosition = -1.0;
         }
         hardware.launcherAimServo.setPosition(launcherAimServoPosition);
-
     }
 
     private void arm()
