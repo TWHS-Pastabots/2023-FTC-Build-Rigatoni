@@ -30,7 +30,7 @@ public class RigatoniTeleOp extends OpMode {
     boolean fieldOriented;
     boolean controlOverride;
     boolean intakeOn = false;
-    double intakeSpeed = 1.0;
+    double intakeSpeed = 0.75;
     boolean clawOpen = false;
 
     double armSpeed = 1;
