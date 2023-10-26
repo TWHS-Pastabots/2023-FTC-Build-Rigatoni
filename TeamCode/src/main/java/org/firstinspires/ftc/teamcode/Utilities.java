@@ -28,11 +28,8 @@ public class Utilities
 
     public void shoot()
     {
-        hardware.launcherReleaseServo.setPosition(1);
-        wait(10);
         hardware.launcherTriggerServo.setPosition(1);
-        wait(1000);
-        hardware.launcherTriggerServo.setPosition(0);
-        hardware.launcherReleaseServo.setPosition(0);
+        wait(500);
+        hardware.launcherTriggerServo.setPosition(.2);
     }
 }
