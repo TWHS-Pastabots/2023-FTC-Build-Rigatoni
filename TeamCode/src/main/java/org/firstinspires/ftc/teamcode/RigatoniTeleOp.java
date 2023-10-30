@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,9 +18,6 @@ public class RigatoniTeleOp extends OpMode {
     Hardware hardware;
     Utilities utilities;
 
-    Gamepad previousGamepad1 = new Gamepad();
-    Gamepad previousGamepad2 = new Gamepad();
-
     //Drivetrain speeds
     final double FAST_SPEED = 1.0;
     final double MID_SPEED = .5;
@@ -30,11 +28,14 @@ public class RigatoniTeleOp extends OpMode {
     boolean fieldOriented;
     boolean controlOverride;
     boolean intakeOn = false;
-    double intakeSpeed = 0.75;
+    double intakeSpeed = 1;
     boolean clawOpen = false;
 
     double armSpeed = 1;
-    final double LAUNCHER_AIM_SERVO_ADJUSTMENT = 0.1;
+    final double LAUNCHER_AIM_LOW_BOUND = 0;
+    final double LAUNCHER_AIM_HIGH_BOUND = 1;
+
+    double launcherAimServoPosition;
 
     final double FLYWHEEL_FAST_CAP = 1;
 
@@ -42,7 +43,12 @@ public class RigatoniTeleOp extends OpMode {
 
     double flywheelSpeed = 1.0;
 
+    int armPosition;
+
+    // ElapsedTime
     ElapsedTime flywheelTime;
+
+    ElapsedTime launcherAimTime;
 
     ElapsedTime sinceStartTime;
 
@@ -62,6 +68,7 @@ public class RigatoniTeleOp extends OpMode {
         speedConstant = FAST_SPEED;
         fieldOriented = false;
         controlOverride = false;
+        launcherAimServoPosition = 0;
 
         // Setup field oriented
          angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -77,18 +84,15 @@ public class RigatoniTeleOp extends OpMode {
         telemetry.update();
         sinceStartTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         flywheelTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        launcherAimTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     }
 
     @Override
     public void loop() {
-        previousGamepad1.copy(gamepad1);
-        previousGamepad2.copy(gamepad2);
-
         drive();
         intake();
         launcher();
         arm();
-
     }
 
     public void drive() {
@@ -231,29 +235,35 @@ public class RigatoniTeleOp extends OpMode {
 
     private void launcher()
     {
-        //Launcher
+        // Flywheel speed
         if(gamepad2.dpad_up && flywheelTime.time() >= 250)
         {
-            flywheelSpeed = Math.max(flywheelSpeed + 0.05, FLYWHEEL_SLOW_CAP);
+            flywheelSpeed = Math.min(flywheelSpeed + 0.05, FLYWHEEL_FAST_CAP);
+            flywheelTime.reset();
         }
         else if(gamepad2.dpad_down && flywheelTime.time() >= 250)
         {
-            flywheelSpeed = Math.min(flywheelSpeed - 0.05, FLYWHEEL_FAST_CAP);
+            flywheelSpeed = Math.max(flywheelSpeed - 0.05, FLYWHEEL_SLOW_CAP);
+            flywheelTime.reset();
         }
         hardware.flywheel.setPower(gamepad2.left_trigger * flywheelSpeed);
 
+        // Shoot
         if(gamepad2.right_trigger > 0.1)
         {
             utilities.shoot();
         }
-        double launcherAimServoPosition = hardware.launcherAimServo.getPosition() + LAUNCHER_AIM_SERVO_ADJUSTMENT * gamepad2.right_stick_x;
-        if(launcherAimServoPosition > 1.0)
+
+        // Telescoping hood position
+        if(gamepad2.dpad_left && launcherAimTime.time() >= 250)
         {
-            launcherAimServoPosition = 1.0;
+            launcherAimServoPosition = Math.min(launcherAimServoPosition + 0.05, LAUNCHER_AIM_HIGH_BOUND);
+            launcherAimTime.reset();
         }
-        else if(launcherAimServoPosition < -1.0)
+        else if(gamepad2.dpad_right && launcherAimTime.time() >= 250)
         {
-            launcherAimServoPosition = -1.0;
+            launcherAimServoPosition = Math.max(launcherAimServoPosition - 0.05, LAUNCHER_AIM_LOW_BOUND);
+            launcherAimTime.reset();
         }
         hardware.launcherAimServo.setPosition(launcherAimServoPosition);
     }
@@ -270,11 +280,17 @@ public class RigatoniTeleOp extends OpMode {
         {
             if(Math.abs(gamepad2.left_stick_y) > 0.05) //Setting deadzone for arm breaking
             {
+                if(!(hardware.arm.getMode() == DcMotor.RunMode.RUN_USING_ENCODER))
+                {
+                    hardware.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
                 hardware.arm.setPower(-gamepad2.left_stick_y * armSpeed);
+                armPosition = hardware.arm.getCurrentPosition();
             }
-            else
+            else // PID control for arm breaking
             {
-                hardware.arm.setPower(0);
+                hardware.arm.setTargetPosition(armPosition);
+                hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             if(gamepad2.triangle)
