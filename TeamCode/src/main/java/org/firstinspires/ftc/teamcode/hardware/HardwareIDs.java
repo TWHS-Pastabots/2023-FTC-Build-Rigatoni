@@ -17,14 +17,13 @@ public class HardwareIDs {
 
     // Servos
 
-    // Intake Servos
-    public static final String LEFT_INTAKE_SERVO = "leftIntakeServo";
-    public static final String RIGHT_INTAKE_SERVO = "rightIntakeServo";
+    // Intake Servo
     public static final String INTAKE_DEPLOY_SERVO = "intakeDeployServo";
+
     // Launcher Servos
     public static final String AIMING_SERVO = "launcherAimServo";
     public static final String RING_TRIGGER_SERVO = "launcherTriggerServo";
-    public static final String LAUNCHER_RELEASE_SERVO = "launcherReleaseServo";
+
     // Claw Servos
     public static final String CLAW_SERVO = "clawServo";
 

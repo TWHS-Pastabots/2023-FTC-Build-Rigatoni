@@ -26,6 +26,8 @@ public class Hardware {
     public DcMotorEx flywheel;
 
     // Launcher Servos
+    public Servo intakeDeployServo;
+    // Launcher Servos
     public Servo launcherAimServo;
     public Servo launcherTriggerServo;
     public Servo launcherReleaseServo;
@@ -75,15 +77,20 @@ public class Hardware {
     public void initializeSupplementaryMotors(HardwareMap hardwareMap) {
         // Set up servos
 
+        // Intake servo
+        intakeDeployServo = hardwareMap.get(Servo.class, HardwareIDs.INTAKE_DEPLOY_SERVO);
+
         // Set up launcher servos
         launcherAimServo = hardwareMap.get(Servo.class, HardwareIDs.AIMING_SERVO);
         launcherTriggerServo = hardwareMap.get(Servo.class, HardwareIDs.RING_TRIGGER_SERVO);
-        launcherReleaseServo = hardwareMap.get(Servo.class, HardwareIDs.LAUNCHER_RELEASE_SERVO);
 
         // Set up claw servos
         clawServo = hardwareMap.get(Servo.class, HardwareIDs.CLAW_SERVO);
 
         // Set servo positions
+
+        // Intake servo
+        intakeDeployServo.setPosition(0);
 
         // Launcher servos
         launcherAimServo.setPosition(0);

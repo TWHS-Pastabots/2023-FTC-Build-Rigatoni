@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -13,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
-@TeleOp(name="Rigatoni")
-public class RigatoniTeleOp extends OpMode {
+@TeleOp(name="Checkpoint4")
+public class Checkpoint4TeleOp extends OpMode {
     Hardware hardware;
     Utilities utilities;
 
@@ -27,30 +26,33 @@ public class RigatoniTeleOp extends OpMode {
     double speedConstant;
     boolean fieldOriented;
     boolean controlOverride;
-    boolean intakeOn = false;
-    double intakeSpeed = 1;
-    boolean clawOpen = false;
+    boolean intakeOn;
+    boolean clawOpen;
 
-    double armSpeed = 1;
+    final double INTAKE_SPEED = 1;
+    final double ARM_SPEED = 1;
     final double LAUNCHER_AIM_LOW_BOUND = 0;
     final double LAUNCHER_AIM_HIGH_BOUND = 1;
 
     double launcherAimServoPosition;
 
+    final double INTAKE_DEPLOY_MAX_POSITION = 1;
+    final double INTAKE_DEPLOY_MIN_POSITION = 0;
+    double intakeDeployServoPosition;
+
     final double FLYWHEEL_FAST_CAP = 1;
-
     final double FLYWHEEL_SLOW_CAP = .4;
-
-    double flywheelSpeed = 1.0;
+    double flywheelSpeed;
 
     int armPosition;
 
     // ElapsedTime
     ElapsedTime flywheelTime;
-
     ElapsedTime launcherAimTime;
-
     ElapsedTime sinceStartTime;
+    ElapsedTime intakeTime;
+    ElapsedTime intakeDeployTime;
+    ElapsedTime clawTime;
 
     // Field oriented
     Orientation angles = new Orientation();
@@ -68,11 +70,15 @@ public class RigatoniTeleOp extends OpMode {
         speedConstant = FAST_SPEED;
         fieldOriented = false;
         controlOverride = false;
+        intakeOn = false;
+        clawOpen = false;
         launcherAimServoPosition = 0;
+        intakeDeployServoPosition = 0;
+        flywheelSpeed = 1.0;
 
         // Setup field oriented
-         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-         initYaw = angles.firstAngle;
+        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        initYaw = angles.firstAngle;
 
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
@@ -85,6 +91,9 @@ public class RigatoniTeleOp extends OpMode {
         sinceStartTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         flywheelTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         launcherAimTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        intakeTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        intakeDeployTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        clawTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     }
 
     @Override
@@ -102,7 +111,7 @@ public class RigatoniTeleOp extends OpMode {
         // Change slow mode
         if (gamepad1.cross) {
             speedConstant = SLOW_SPEED;
-        } else if (gamepad1.square) {
+        } else if (gamepad1.circle) {
             speedConstant = MID_SPEED;
         } else if (gamepad1.triangle) {
             speedConstant = FAST_SPEED;
@@ -162,36 +171,36 @@ public class RigatoniTeleOp extends OpMode {
 
 
             // Field oriented
-        if (fieldOriented) {
-        angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            if (fieldOriented) {
+                angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        adjustedYaw = angles.firstAngle-initYaw;
+                adjustedYaw = angles.firstAngle-initYaw;
 
-        double zerodYaw = -initYaw+angles.firstAngle;
+                double zerodYaw = -initYaw+angles.firstAngle;
 
-        double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
+                double theta = Math.atan2(y, x) * 180/Math.PI; // aka angle
 
-        double realTheta;
+                double realTheta;
 
-        realTheta = (360 - zerodYaw) + theta;
+                realTheta = (360 - zerodYaw) + theta;
 
-        double power = Math.hypot(x, y);
+                double power = Math.hypot(x, y);
 
-        double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-        double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
-        double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
+                double sin = Math.sin((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+                double cos = Math.cos((realTheta * (Math.PI / 180)) - (Math.PI / 4));
+                double maxSinCos = Math.max(Math.abs(sin), Math.abs(cos));
 
-        leftFrontPower = (power * cos / maxSinCos + turn);
-        rightFrontPower = (power * sin / maxSinCos - turn);
-        leftRearPower = (power * sin / maxSinCos + turn);
-        rightRearPower = (power * cos / maxSinCos - turn);
-        }
-        else {
-            leftFrontPower = y + x + turn;
-            leftRearPower = y - x + turn;
-            rightFrontPower = y - x - turn;
-            rightRearPower = y + x - turn;
-        }
+                leftFrontPower = (power * cos / maxSinCos + turn);
+                rightFrontPower = (power * sin / maxSinCos - turn);
+                leftRearPower = (power * sin / maxSinCos + turn);
+                rightRearPower = (power * cos / maxSinCos - turn);
+            }
+            else {
+                leftFrontPower = y + x + turn;
+                leftRearPower = y - x + turn;
+                rightFrontPower = y - x - turn;
+                rightRearPower = y + x - turn;
+            }
 
             if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
                 // Find the largest power
@@ -223,14 +232,35 @@ public class RigatoniTeleOp extends OpMode {
 
     private void intake()
     {
-        if(gamepad2.square)
+        // Intake power
+        if(gamepad1.square && intakeTime.time() >= 250)
         {
-            hardware.intake.setPower(intakeSpeed);
+            intakeOn = !intakeOn;
+            intakeTime.reset();
+            if(intakeOn)
+            {
+                hardware.intake.setPower(INTAKE_SPEED);
+            }
+            else
+            {
+                hardware.intake.setPower(0.0);
+            }
         }
-        if(gamepad2.cross)
+
+        // Intake deployment
+        if(gamepad2.right_stick_y >= 0.1 && intakeDeployTime.time() >= 50)
         {
-            hardware.intake.setPower(0.0);
+            intakeDeployTime.reset();
+            if(gamepad2.right_stick_y < 0)
+            {
+                intakeDeployServoPosition = Math.min(intakeDeployServoPosition + 0.05, INTAKE_DEPLOY_MAX_POSITION);
+            }
+            else
+            {
+                intakeDeployServoPosition = Math.max(intakeDeployServoPosition - 0.05, INTAKE_DEPLOY_MIN_POSITION);
+            }
         }
+        hardware.intakeDeployServo.setPosition(intakeDeployServoPosition);
     }
 
     private void launcher()
@@ -238,12 +268,12 @@ public class RigatoniTeleOp extends OpMode {
         // Flywheel speed
         if(gamepad2.dpad_up && flywheelTime.time() >= 250)
         {
-            flywheelSpeed = Math.min(flywheelSpeed + 0.05, FLYWHEEL_FAST_CAP);
+            flywheelSpeed = Math.min(flywheelSpeed + 0.10, FLYWHEEL_FAST_CAP);
             flywheelTime.reset();
         }
         else if(gamepad2.dpad_down && flywheelTime.time() >= 250)
         {
-            flywheelSpeed = Math.max(flywheelSpeed - 0.05, FLYWHEEL_SLOW_CAP);
+            flywheelSpeed = Math.max(flywheelSpeed - 0.10, FLYWHEEL_SLOW_CAP);
             flywheelTime.reset();
         }
         hardware.flywheel.setPower(gamepad2.left_trigger * flywheelSpeed);
@@ -255,14 +285,14 @@ public class RigatoniTeleOp extends OpMode {
         }
 
         // Telescoping hood position
-        if(gamepad2.dpad_left && launcherAimTime.time() >= 250)
+        if(gamepad2.dpad_right && launcherAimTime.time() >= 50)
         {
-            launcherAimServoPosition = Math.min(launcherAimServoPosition + 0.05, LAUNCHER_AIM_HIGH_BOUND);
+            launcherAimServoPosition = Math.min(launcherAimServoPosition + 0.025, LAUNCHER_AIM_HIGH_BOUND);
             launcherAimTime.reset();
         }
-        else if(gamepad2.dpad_right && launcherAimTime.time() >= 250)
+        else if(gamepad2.dpad_left && launcherAimTime.time() >= 50)
         {
-            launcherAimServoPosition = Math.max(launcherAimServoPosition - 0.05, LAUNCHER_AIM_LOW_BOUND);
+            launcherAimServoPosition = Math.max(launcherAimServoPosition - 0.025, LAUNCHER_AIM_LOW_BOUND);
             launcherAimTime.reset();
         }
         hardware.launcherAimServo.setPosition(launcherAimServoPosition);
@@ -284,7 +314,7 @@ public class RigatoniTeleOp extends OpMode {
                 {
                     hardware.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
-                hardware.arm.setPower(-gamepad2.left_stick_y * armSpeed);
+                hardware.arm.setPower(-gamepad2.left_stick_y * ARM_SPEED);
                 armPosition = hardware.arm.getCurrentPosition();
             }
             else // PID control for arm breaking
@@ -293,13 +323,11 @@ public class RigatoniTeleOp extends OpMode {
                 hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
-            if(gamepad2.triangle)
+            // Claw
+            if(gamepad2.triangle && clawTime.time() >= 250)
             {
-                hardware.clawServo.setPosition(1); //open
-            }
-            if(gamepad2.circle)
-            {
-                hardware.clawServo.setPosition(0); //closed
+                clawOpen = !clawOpen;
+                utilities.clawControl(clawOpen);
             }
         }
     }
