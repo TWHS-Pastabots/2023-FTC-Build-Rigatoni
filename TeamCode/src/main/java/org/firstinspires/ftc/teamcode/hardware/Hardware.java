@@ -95,7 +95,6 @@ public class Hardware {
         // Launcher servos
         launcherAimServo.setPosition(0);
         launcherTriggerServo.setPosition(0.2);
-        launcherReleaseServo.setPosition(0);
         // Claw servos
         clawServo.setPosition(0); //closed
 

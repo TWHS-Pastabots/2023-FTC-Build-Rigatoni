@@ -252,7 +252,7 @@ public class Checkpoint4TeleOp extends OpMode {
         if(gamepad2.right_stick_y >= 0.1 && intakeDeployTime.time() >= 50)
         {
             intakeDeployTime.reset();
-            if(gamepad2.right_stick_y < 0)
+            if(gamepad2.right_stick_y > 0)
             {
                 intakeDeployServoPosition = Math.min(intakeDeployServoPosition + 0.05, INTAKE_DEPLOY_MAX_POSITION);
             }
@@ -262,6 +262,8 @@ public class Checkpoint4TeleOp extends OpMode {
             }
         }
         hardware.intakeDeployServo.setPosition(intakeDeployServoPosition);
+
+
     }
 
     private void launcher()
@@ -309,20 +311,20 @@ public class Checkpoint4TeleOp extends OpMode {
         // If endgame or overridden allow arm use
         if(sinceStartTime.time() > 90000 || controlOverride)
         {
-            if(Math.abs(gamepad2.left_stick_y) > 0.05) //Setting deadzone for arm breaking
-            {
-                if(!(hardware.arm.getMode() == DcMotor.RunMode.RUN_USING_ENCODER))
-                {
-                    hardware.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }
+//            if(Math.abs(gamepad2.left_stick_y) > 0.10) //Setting deadzone for arm breaking
+//            {
+//                if(!(hardware.arm.getMode() == DcMotor.RunMode.RUN_USING_ENCODER))
+//                {
+//                    hardware.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                }
                 hardware.arm.setPower(-gamepad2.left_stick_y * ARM_SPEED);
-                armPosition = hardware.arm.getCurrentPosition();
-            }
-            else // PID control for arm breaking
-            {
-                hardware.arm.setTargetPosition(armPosition);
-                hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
+//                armPosition = hardware.arm.getCurrentPosition();
+//            }
+//            else // PID control for arm breaking
+//            {
+//                hardware.arm.setTargetPosition(armPosition);
+//                hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            }
 
             // Claw
             if(gamepad2.triangle && clawTime.time() >= 250)
