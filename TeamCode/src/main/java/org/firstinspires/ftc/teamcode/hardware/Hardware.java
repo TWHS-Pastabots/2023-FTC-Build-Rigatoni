@@ -61,7 +61,7 @@ public class Hardware {
         for(DcMotorEx motor: driveMotors) {
             motor.setPower(0.0);
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         // Set up IMU
@@ -117,6 +117,6 @@ public class Hardware {
 
         flywheel.setPower(0);
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
