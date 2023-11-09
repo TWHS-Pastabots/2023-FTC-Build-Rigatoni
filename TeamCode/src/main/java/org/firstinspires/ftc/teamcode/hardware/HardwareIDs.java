@@ -18,7 +18,8 @@ public class HardwareIDs {
     // Servos
 
     // Intake Servo
-    public static final String INTAKE_DEPLOY_SERVO = "intakeDeployServo";
+    public static final String INTAKE_DEPLOY_SERVO1 = "intakeDeployServo1";
+    public static final String INTAKE_DEPLOY_SERVO2 = "intakeDeployServo2";
 
     // Launcher Servos
     public static final String AIMING_SERVO = "launcherAimServo";

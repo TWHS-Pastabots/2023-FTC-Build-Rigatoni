@@ -266,7 +266,7 @@ public class AutoAimTeleOp extends OpMode {
                 intakeDeployServoPosition = Math.max(intakeDeployServoPosition - 0.05, INTAKE_DEPLOY_MIN_POSITION);
             }
         }
-        hardware.intakeDeployServo.setPosition(intakeDeployServoPosition);
+        hardware.intakeDeployServo1.setPosition(intakeDeployServoPosition);
     }
 
     private void launcher()
