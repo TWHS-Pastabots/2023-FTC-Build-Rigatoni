@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -37,9 +38,12 @@ public class Checkpoint4TeleOp extends OpMode {
 
     double launcherAimServoPosition;
 
-    final double INTAKE_DEPLOY_MAX_POSITION = 1;
-    final double INTAKE_DEPLOY_MIN_POSITION = 0;
-    double intakeDeployServoPosition;
+    final double INTAKE_DEPLOY1_MAX_POSITION = 0.50; // .45
+    final double INTAKE_DEPLOY1_MIN_POSITION = 0.05;
+    final double INTAKE_DEPLOY2_MAX_POSITION = 0.65;
+    final double INTAKE_DEPLOY2_MIN_POSITION = 0.20; // .25
+    double intakeDeployServoPosition1;
+    double intakeDeployServoPosition2;
 
     final double FLYWHEEL_FAST_CAP = 1;
     final double FLYWHEEL_SLOW_CAP = .4;
@@ -74,7 +78,8 @@ public class Checkpoint4TeleOp extends OpMode {
         intakeOn = false;
         clawOpen = false;
         launcherAimServoPosition = 0;
-        intakeDeployServoPosition = 0;
+        intakeDeployServoPosition1 = 0.05; // 0.05 drop 0.45 up
+        intakeDeployServoPosition2 = 0.65; // 0.65 drop 0.25 up
         flywheelSpeed = 1.0;
 
         // Setup field oriented
@@ -103,6 +108,9 @@ public class Checkpoint4TeleOp extends OpMode {
         intake();
         launcher();
         arm();
+        telemetry.addData("Left Servo:: ", hardware.intakeDeployServo2.getPosition());
+        telemetry.addData("Right Servo:: ", hardware.intakeDeployServo1.getPosition());
+        telemetry.update();
     }
 
     public void drive() {
@@ -249,21 +257,22 @@ public class Checkpoint4TeleOp extends OpMode {
         }
 
         // Intake deployment
-        if(gamepad2.right_stick_y >= 0.1 && intakeDeployTime.time() >= 50)
+        if(Math.abs(gamepad2.right_stick_y) >= 0.1 && intakeDeployTime.time() >= 50)
         {
             intakeDeployTime.reset();
             if(gamepad2.right_stick_y > 0)
             {
-                intakeDeployServoPosition = Math.min(intakeDeployServoPosition + 0.05, INTAKE_DEPLOY_MAX_POSITION);
+                intakeDeployServoPosition1 = Math.min(intakeDeployServoPosition1 + 0.05, INTAKE_DEPLOY1_MAX_POSITION);
+                intakeDeployServoPosition2 = Math.max(intakeDeployServoPosition2 - 0.05, INTAKE_DEPLOY2_MIN_POSITION);
             }
             else
             {
-                intakeDeployServoPosition = Math.max(intakeDeployServoPosition - 0.05, INTAKE_DEPLOY_MIN_POSITION);
+                intakeDeployServoPosition1 = Math.max(intakeDeployServoPosition1 - 0.05, INTAKE_DEPLOY1_MIN_POSITION);
+                intakeDeployServoPosition2 = Math.min(intakeDeployServoPosition2 + 0.05, INTAKE_DEPLOY2_MAX_POSITION);
             }
         }
-        hardware.intakeDeployServo.setPosition(intakeDeployServoPosition);
-
-
+        hardware.intakeDeployServo1.setPosition(intakeDeployServoPosition1);
+        hardware.intakeDeployServo2.setPosition(intakeDeployServoPosition2);
     }
 
     private void launcher()
