@@ -78,8 +78,6 @@ public class Checkpoint4TeleOp extends OpMode {
         intakeOn = false;
         clawOpen = false;
         launcherAimServoPosition = 0;
-        intakeDeployServoPosition1 = 0.05; // 0.05 drop 0.45 up
-        intakeDeployServoPosition2 = 0.65; // 0.65 drop 0.25 up
         flywheelSpeed = 1.0;
 
         // Setup field oriented
@@ -100,6 +98,9 @@ public class Checkpoint4TeleOp extends OpMode {
         intakeTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         intakeDeployTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         clawTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        launcherAimServoPosition = 0.35;
+        intakeDeployServoPosition1 = 0.05; // 0.05 drop 0.45 up
+        intakeDeployServoPosition2 = 0.65; // 0.65 drop 0.25 up
     }
 
     @Override
@@ -127,9 +128,9 @@ public class Checkpoint4TeleOp extends OpMode {
         }
 
         // Change field oriented mode
-        if (gamepad1.options) {
+        if (gamepad1.share) {
             fieldOriented = true;
-        } else if (gamepad1.share) {
+        } else if (gamepad1.options) {
             fieldOriented = false;
         }
 
@@ -317,9 +318,7 @@ public class Checkpoint4TeleOp extends OpMode {
         {
             controlOverride = true;
         }
-        // If endgame or overridden allow arm use
-        if(sinceStartTime.time() > 90000 || controlOverride)
-        {
+
 //            if(Math.abs(gamepad2.left_stick_y) > 0.10) //Setting deadzone for arm breaking
 //            {
 //                if(!(hardware.arm.getMode() == DcMotor.RunMode.RUN_USING_ENCODER))
@@ -341,6 +340,5 @@ public class Checkpoint4TeleOp extends OpMode {
                 clawOpen = !clawOpen;
                 utilities.clawControl(clawOpen);
             }
-        }
     }
 }
