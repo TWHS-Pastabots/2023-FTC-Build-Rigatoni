@@ -92,8 +92,8 @@ public class Hardware {
         // Set servo positions
 
         // Intake servo
-        intakeDeployServo1.setPosition(0);
-        intakeDeployServo1.setPosition(0);
+        intakeDeployServo1.setPosition(0.5);
+        intakeDeployServo2.setPosition(0.2);
 
         // Launcher servos
         launcherAimServo.setPosition(0);
