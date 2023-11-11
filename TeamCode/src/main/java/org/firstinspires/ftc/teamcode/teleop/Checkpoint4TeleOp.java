@@ -243,7 +243,7 @@ public class Checkpoint4TeleOp extends OpMode {
     private void intake()
     {
         // Intake power
-        if(gamepad1.square && intakeTime.time() >= 250)
+        if(gamepad2.square && intakeTime.time() >= 250)
         {
             intakeOn = !intakeOn;
             intakeTime.reset();
@@ -313,32 +313,14 @@ public class Checkpoint4TeleOp extends OpMode {
 
     private void arm()
     {
-        // Prevent accidental arm trigger
-        if(gamepad2.options)
+        // Arm position
+        hardware.arm.setPower(-gamepad2.left_stick_y * ARM_SPEED);
+
+        // Claw
+        if(gamepad2.triangle && clawTime.time() >= 250)
         {
-            controlOverride = true;
+            clawOpen = !clawOpen;
+            utilities.clawControl(clawOpen);
         }
-
-//            if(Math.abs(gamepad2.left_stick_y) > 0.10) //Setting deadzone for arm breaking
-//            {
-//                if(!(hardware.arm.getMode() == DcMotor.RunMode.RUN_USING_ENCODER))
-//                {
-//                    hardware.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                }
-                hardware.arm.setPower(-gamepad2.left_stick_y * ARM_SPEED);
-//                armPosition = hardware.arm.getCurrentPosition();
-//            }
-//            else // PID control for arm breaking
-//            {
-//                hardware.arm.setTargetPosition(armPosition);
-//                hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            }
-
-            // Claw
-            if(gamepad2.triangle && clawTime.time() >= 250)
-            {
-                clawOpen = !clawOpen;
-                utilities.clawControl(clawOpen);
-            }
     }
 }
