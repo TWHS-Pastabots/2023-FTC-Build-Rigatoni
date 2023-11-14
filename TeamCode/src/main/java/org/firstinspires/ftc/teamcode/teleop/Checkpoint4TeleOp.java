@@ -29,6 +29,7 @@ public class Checkpoint4TeleOp extends OpMode {
     boolean fieldOriented;
     boolean controlOverride;
     boolean intakeOn;
+    boolean intakeBackOn;
     boolean clawOpen;
 
     final double INTAKE_SPEED = 1;
@@ -56,6 +57,7 @@ public class Checkpoint4TeleOp extends OpMode {
     ElapsedTime launcherAimTime;
     ElapsedTime sinceStartTime;
     ElapsedTime intakeTime;
+    ElapsedTime intakeBackTime;
     ElapsedTime intakeDeployTime;
     ElapsedTime clawTime;
 
@@ -79,6 +81,8 @@ public class Checkpoint4TeleOp extends OpMode {
         clawOpen = false;
         launcherAimServoPosition = 0;
         flywheelSpeed = 1.0;
+        armPosition = 0;
+        hardware.arm.setTargetPosition(armPosition);
 
         // Setup field oriented
         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -96,11 +100,14 @@ public class Checkpoint4TeleOp extends OpMode {
         flywheelTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         launcherAimTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         intakeTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        intakeBackTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         intakeDeployTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         clawTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         launcherAimServoPosition = 0.35;
         intakeDeployServoPosition1 = 0.05; // 0.05 drop 0.45 up
         intakeDeployServoPosition2 = 0.65; // 0.65 drop 0.25 up
+        intakeBackOn = false;
+
     }
 
     @Override
@@ -111,6 +118,8 @@ public class Checkpoint4TeleOp extends OpMode {
         arm();
         telemetry.addData("Left Servo:: ", hardware.intakeDeployServo2.getPosition());
         telemetry.addData("Right Servo:: ", hardware.intakeDeployServo1.getPosition());
+        telemetry.addData("Arm position", armPosition);
+        telemetry.addData("Arm position Actual", hardware.arm.getCurrentPosition());
         telemetry.update();
     }
 
@@ -256,6 +265,19 @@ public class Checkpoint4TeleOp extends OpMode {
                 hardware.intake.setPower(0.0);
             }
         }
+        if(gamepad2.cross && intakeBackTime.time() >= 250)
+        {
+            intakeBackOn = !intakeBackOn;
+            if(intakeBackOn)
+            {
+                hardware.intake.setPower(-0.5);
+            }
+            else
+            {
+                hardware.intake.setPower(0);
+            }
+            intakeBackTime.reset();
+        }
 
         // Intake deployment
         if(Math.abs(gamepad2.right_stick_y) >= 0.1 && intakeDeployTime.time() >= 50)
@@ -313,8 +335,22 @@ public class Checkpoint4TeleOp extends OpMode {
 
     private void arm()
     {
+        if(gamepad2.right_bumper)
+        {
+            armPosition = 131;
+        }
+        else if(gamepad2.left_bumper)
+        {
+            armPosition = 193;
+        }
+        else if(gamepad2.circle)
+        {
+            armPosition = 0;
+        }
+
         // Arm position
-        hardware.arm.setPower(-gamepad2.left_stick_y * ARM_SPEED);
+        hardware.arm.setTargetPosition(armPosition);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Claw
         if(gamepad2.triangle && clawTime.time() >= 250)
