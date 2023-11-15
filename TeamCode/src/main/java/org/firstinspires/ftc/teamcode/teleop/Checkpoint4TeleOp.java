@@ -24,16 +24,16 @@ public class Checkpoint4TeleOp extends OpMode {
     final double MID_SPEED = .5;
     final double SLOW_SPEED = .25;
     final double DPAD_SPEED = .25;
-
     double speedConstant;
+
     boolean fieldOriented;
-    boolean controlOverride;
     boolean intakeOn;
-    boolean intakeBackOn;
+    boolean intakeReverseOn;
     boolean clawOpen;
 
     final double INTAKE_SPEED = 1;
-    final double ARM_SPEED = 1;
+    final double ARM_MANUAL_SPEED = 1;
+    final double ARM_PID_SPEED = 0.5;
     final double LAUNCHER_AIM_LOW_BOUND = 0;
     final double LAUNCHER_AIM_HIGH_BOUND = 1;
 
@@ -76,7 +76,6 @@ public class Checkpoint4TeleOp extends OpMode {
 
         speedConstant = FAST_SPEED;
         fieldOriented = false;
-        controlOverride = false;
         intakeOn = false;
         clawOpen = false;
         launcherAimServoPosition = 0;
@@ -106,7 +105,7 @@ public class Checkpoint4TeleOp extends OpMode {
         launcherAimServoPosition = 0.35;
         intakeDeployServoPosition1 = 0.05; // 0.05 drop 0.45 up
         intakeDeployServoPosition2 = 0.65; // 0.65 drop 0.25 up
-        intakeBackOn = false;
+        intakeReverseOn = false;
 
     }
 
@@ -116,6 +115,11 @@ public class Checkpoint4TeleOp extends OpMode {
         intake();
         launcher();
         arm();
+        telemetry();
+
+    }
+
+    public void telemetry() {
         telemetry.addData("Left Servo:: ", hardware.intakeDeployServo2.getPosition());
         telemetry.addData("Right Servo:: ", hardware.intakeDeployServo1.getPosition());
         telemetry.addData("Arm position", armPosition);
@@ -267,8 +271,8 @@ public class Checkpoint4TeleOp extends OpMode {
         }
         if(gamepad2.cross && intakeBackTime.time() >= 250)
         {
-            intakeBackOn = !intakeBackOn;
-            if(intakeBackOn)
+            intakeReverseOn = !intakeReverseOn;
+            if(intakeReverseOn)
             {
                 hardware.intake.setPower(-0.5);
             }
@@ -337,11 +341,11 @@ public class Checkpoint4TeleOp extends OpMode {
     {
         if(gamepad2.right_bumper)
         {
-            armPosition = 131;
+            armPosition = 125;
         }
         else if(gamepad2.left_bumper)
         {
-            armPosition = 193;
+            armPosition = 190;
         }
         else if(gamepad2.circle)
         {
@@ -350,6 +354,7 @@ public class Checkpoint4TeleOp extends OpMode {
 
         // Arm position
         hardware.arm.setTargetPosition(armPosition);
+        hardware.arm.setPower(ARM_PID_SPEED);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Claw
