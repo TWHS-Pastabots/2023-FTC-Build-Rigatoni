@@ -259,6 +259,7 @@ public class Checkpoint4TeleOp extends OpMode {
         if(gamepad2.square && intakeTime.time() >= 250)
         {
             intakeOn = !intakeOn;
+            intakeReverseOn = false;
             intakeTime.reset();
             if(intakeOn)
             {
@@ -271,6 +272,7 @@ public class Checkpoint4TeleOp extends OpMode {
         }
         if(gamepad2.cross && intakeBackTime.time() >= 250)
         {
+            intakeOn = false;
             intakeReverseOn = !intakeReverseOn;
             if(intakeReverseOn)
             {
