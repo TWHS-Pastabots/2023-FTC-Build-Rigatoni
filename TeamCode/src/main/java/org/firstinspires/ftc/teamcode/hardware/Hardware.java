@@ -31,7 +31,6 @@ public class Hardware {
     // Launcher Servos
     public Servo launcherAimServo;
     public Servo launcherTriggerServo;
-    public Servo launcherReleaseServo;
     // Claw Servos
     public Servo clawServo;
 
@@ -110,7 +109,7 @@ public class Hardware {
 
         // Set zero power behavior and initialize subsystem motors
         arm.setTargetPosition(0);
-        arm.setPower(1);
+        arm.setPower(0.5);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         intake.setPower(0);
