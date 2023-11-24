@@ -30,17 +30,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.system.Assert;
+import org.firstinspires.ftc.teamcode.teleop.Utilities;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 import java.util.ArrayList;
 
 @Autonomous(name = "Blue")
 public class BlueAutonomous extends LinearOpMode
 {
+    Hardware hardware;
+    AutonUtilities utilities;
+
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -68,6 +74,11 @@ public class BlueAutonomous extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        hardware = new Hardware();
+        Assert.assertNotNull(hardwareMap);
+        hardware.init(hardwareMap);
+        utilities = new AutonUtilities(hardware);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -94,9 +105,10 @@ public class BlueAutonomous extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
+        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
         while (!isStarted() && !isStopRequested())
         {
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
             {
@@ -158,6 +170,26 @@ public class BlueAutonomous extends LinearOpMode
          * during the init loop.
          */
 
+        // Deploy intake
+        utilities.deployIntake();
+        utilities.wait(20);
+
+        // Scan sleeve
+        if(currentDetections.size() != 0)
+        {
+            boolean tagFound = false;
+
+            for(AprilTagDetection tag : currentDetections)
+            {
+                if(tag.id == one || tag.id == two || tag.id == three)
+                {
+                    tagOfInterest = tag;
+                    tagFound = true;
+                    break;
+                }
+            }
+        }
+
         /* Update the telemetry */
         if(tagOfInterest != null)
         {
@@ -174,15 +206,18 @@ public class BlueAutonomous extends LinearOpMode
         // Autonomous
         if(tagOfInterest == null || tagOfInterest.id == one)
         {
-
+            telemetry.addLine("Signal sleeve position 1");
+            telemetry.update();
         }
         else if(tagOfInterest.id == two)
         {
-
+            telemetry.addLine("Signal sleeve position 2");
+            telemetry.update();
         }
         else if(tagOfInterest.id == three)
         {
-
+            telemetry.addLine("Signal sleeve position 3");
+            telemetry.update();
         }
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

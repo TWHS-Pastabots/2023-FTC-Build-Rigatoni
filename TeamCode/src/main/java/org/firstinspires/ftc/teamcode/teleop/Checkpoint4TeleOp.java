@@ -39,10 +39,10 @@ public class Checkpoint4TeleOp extends OpMode {
 
     double launcherAimServoPosition;
 
-    final double INTAKE_DEPLOY1_MAX_POSITION = 0.50; // .45
-    final double INTAKE_DEPLOY1_MIN_POSITION = 0.05;
-    final double INTAKE_DEPLOY2_MAX_POSITION = 0.65;
-    final double INTAKE_DEPLOY2_MIN_POSITION = 0.20; // .25
+    final double INTAKE_DEPLOY1_MAX_POSITION = 0.50; // right up
+    final double INTAKE_DEPLOY1_MIN_POSITION = 0.05; // right down
+    final double INTAKE_DEPLOY2_MAX_POSITION = 0.65; // left down
+    final double INTAKE_DEPLOY2_MIN_POSITION = 0.20; // left up
     double intakeDeployServoPosition1;
     double intakeDeployServoPosition2;
 
