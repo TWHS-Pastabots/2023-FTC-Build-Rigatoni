@@ -30,4 +30,20 @@ public class AutonUtilities
         hardware.intakeDeployServo1.setPosition(0.05);
         hardware.intakeDeployServo2.setPosition(0.65);
     }
+
+    public void intake(int intakeTime)
+    {
+        hardware.intake.setPower(1.0);
+        ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (time.time() < intakeTime){}
+    }
+
+    public void aimLauncher(double position)
+    {
+        hardware.launcherAimServo.setPosition(position);
+    }
+    public void flywheelVelocity(double velocity)
+    {
+        hardware.flywheel.setVelocity(velocity);
+    }
 }
