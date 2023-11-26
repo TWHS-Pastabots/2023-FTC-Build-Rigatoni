@@ -32,8 +32,6 @@ public class Checkpoint4TeleOp extends OpMode {
     boolean clawOpen;
 
     final double INTAKE_SPEED = 1;
-    final double ARM_MANUAL_SPEED = 1;
-    final double ARM_PID_SPEED = 0.5;
     final double LAUNCHER_AIM_LOW_BOUND = 0;
     final double LAUNCHER_AIM_HIGH_BOUND = 1;
 
@@ -51,6 +49,7 @@ public class Checkpoint4TeleOp extends OpMode {
     double flywheelSpeed;
 
     int armPosition;
+    final double ARM_POWER = 0.25;
 
     // ElapsedTime
     ElapsedTime flywheelTime;
@@ -82,6 +81,8 @@ public class Checkpoint4TeleOp extends OpMode {
         flywheelSpeed = 1.0;
         armPosition = 0;
         hardware.arm.setTargetPosition(armPosition);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(ARM_POWER);
 
         // Setup field oriented
         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -356,8 +357,8 @@ public class Checkpoint4TeleOp extends OpMode {
 
         // Arm position
         hardware.arm.setTargetPosition(armPosition);
-        hardware.arm.setPower(ARM_PID_SPEED);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(ARM_POWER);
 
         // Claw
         if(gamepad2.triangle && clawTime.time() >= 250)

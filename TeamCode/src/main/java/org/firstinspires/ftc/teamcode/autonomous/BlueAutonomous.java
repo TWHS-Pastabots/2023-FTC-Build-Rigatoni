@@ -172,7 +172,7 @@ public class BlueAutonomous extends LinearOpMode
 
         // Deploy intake
         utilities.deployIntake();
-        utilities.wait(20);
+        utilities.wait(1000);
 
         // Scan sleeve
         if(currentDetections.size() != 0)
