@@ -108,9 +108,6 @@ public class Hardware {
 
 
         // Set zero power behavior and initialize subsystem motors
-        arm.setTargetPosition(0);
-        arm.setPower(0.5);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         intake.setPower(0);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
