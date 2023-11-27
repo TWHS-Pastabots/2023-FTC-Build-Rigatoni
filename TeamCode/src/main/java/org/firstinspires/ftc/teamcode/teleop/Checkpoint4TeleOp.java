@@ -121,10 +121,10 @@ public class Checkpoint4TeleOp extends OpMode {
     }
 
     public void telemetry() {
-        telemetry.addData("Left Servo:: ", hardware.intakeDeployServo2.getPosition());
-        telemetry.addData("Right Servo:: ", hardware.intakeDeployServo1.getPosition());
-        telemetry.addData("Arm position", armPosition);
-        telemetry.addData("Arm position Actual", hardware.arm.getCurrentPosition());
+        telemetry.addData("Flywheel velocity:: ", hardware.flywheel.getVelocity());
+        telemetry.addData("Launcher servo:: ", hardware.launcherAimServo.getPosition());
+        telemetry.addData("Arm position:: ", armPosition);
+        telemetry.addData("Arm position actual:: ", hardware.arm.getCurrentPosition());
         telemetry.update();
     }
 
