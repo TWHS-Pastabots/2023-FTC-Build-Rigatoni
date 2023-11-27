@@ -23,6 +23,8 @@ public class ArmPIDFTest extends OpMode
     double kD;
     double kF;
 
+    double kFMultiplier;
+
     double incrementMultiplier;
     ElapsedTime buttonTime;
 
@@ -62,6 +64,7 @@ public class ArmPIDFTest extends OpMode
 
     @Override
     public void loop() {
+        calculateKFMultiplier();
         setPIDFCoefficients();
         arm();
         telemetry();
@@ -76,7 +79,13 @@ public class ArmPIDFTest extends OpMode
         telemetry.addData("kI", kI);
         telemetry.addData("kD", kD);
         telemetry.addData("kF", kF);
+        telemetry.addData("kF multiplier", kFMultiplier);
         telemetry.update();
+    }
+
+    public void calculateKFMultiplier() {
+        // Feedforwards based on force of gravity
+        kFMultiplier = Math.cos((hardware.arm.getCurrentPosition() - 5) * Math.PI / 144);
     }
 
     public void setPIDFCoefficients() {
@@ -86,51 +95,60 @@ public class ArmPIDFTest extends OpMode
             if(gamepad1.dpad_up)
             {
                 kP += incrementMultiplier;
+                buttonTime.reset();
             }
             if(gamepad1.dpad_down)
             {
                 kP -= incrementMultiplier;
+                buttonTime.reset();
             }
             // kI
             if(gamepad1.dpad_left)
             {
                 kI -= incrementMultiplier;
+                buttonTime.reset();
             }
             if(gamepad1.dpad_right)
             {
                 kI += incrementMultiplier;
+                buttonTime.reset();
             }
             // kD
             if(gamepad1.triangle)
             {
                 kD += incrementMultiplier;
+                buttonTime.reset();
             }
             if(gamepad1.cross)
             {
                 kD -= incrementMultiplier;
+                buttonTime.reset();
             }
             //kF
             if(gamepad1.square)
             {
                 kF -= incrementMultiplier;
+                buttonTime.reset();
             }
             if(gamepad1.circle)
             {
                 kF += incrementMultiplier;
+                buttonTime.reset();
             }
 
             // Multiplier
             if(gamepad1.right_bumper)
             {
                 incrementMultiplier *= 10;
+                buttonTime.reset();
             }
             if(gamepad1.left_bumper)
             {
                 incrementMultiplier /= 10;
+                buttonTime.reset();
             }
-
-            pidfCoefficients = new PIDFCoefficients(kP, kI, kD, kF);
         }
+        pidfCoefficients = new PIDFCoefficients(kP, kI, kD, kF * kFMultiplier);
     }
 
     private void arm()
