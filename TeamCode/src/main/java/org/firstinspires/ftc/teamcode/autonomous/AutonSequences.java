@@ -15,20 +15,20 @@ public class AutonSequences {
     AutonUtilities utilities;
 
     // Servo Positions (0.35 straight)
-    final double BLUE_HIGH_SERVO = 0.50;
-    final double BLUE_MID_SERVO = 0.40;
+    final double BLUE_HIGH_SERVO = 0.60;
+    final double BLUE_MID_SERVO = 0.43;
     final double BLUE_LOW_SERVO = 0.30;
     final double RED_HIGH_SERVO = 0.60;
     final double RED_MID_SERVO = 0.40;
     final double RED_LOW_SERVO = 0.50;
 
     // Flywheel speeds
-    final double BLUE_HIGH_VELOCITY = 40;
-    final double BLUE_MID_VELOCITY = 40;
-    final double BLUE_LOW_VELOCITY = 40;
-    final double RED_HIGH_VELOCITY = 40;
-    final double RED_MID_VELOCITY = 40;
-    final double RED_LOW_VELOCITY = 40;
+    final double BLUE_HIGH_VELOCITY = 340;
+    final double BLUE_MID_VELOCITY = 280;
+    final double BLUE_LOW_VELOCITY = 340;
+    final double RED_HIGH_VELOCITY = 340;
+    final double RED_MID_VELOCITY = 340;
+    final double RED_LOW_VELOCITY = 340;
 
     // Trajectories
 
@@ -53,7 +53,7 @@ public class AutonSequences {
 
     // Blue Pose + Vector2d
     Pose2d blueStartPose = new Pose2d(-64, -48, Math.toRadians(0));
-    Vector2d blueShoot = new Vector2d(-24, -12);
+    Vector2d blueShoot = new Vector2d(-24, -18);
     Vector2d blueTowardsFirstRing = new Vector2d(-48, -36);
     Vector2d blueFirstRing = new Vector2d(-48, -72);
     Vector2d blueSecondRing = new Vector2d(-24, -72);
@@ -150,6 +150,8 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Pick up and shoot other rings
         blueIntake();
@@ -172,6 +174,8 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Pick up and shoot other rings
         blueIntake();
@@ -194,6 +198,8 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Pick up and shoot other rings
         blueIntake();
@@ -226,6 +232,7 @@ public class AutonSequences {
             utilities.shoot();
             utilities.wait(1000);
         }
+        utilities.flywheelOff();
     }
 
     public void redOneFull()
@@ -242,6 +249,8 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Pick up and shoot other rings
         redIntake();
@@ -263,6 +272,8 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Pick up and shoot other rings
         redIntake();
@@ -284,6 +295,8 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Pick up and shoot other rings
         redIntake();
@@ -316,6 +329,7 @@ public class AutonSequences {
             utilities.shoot();
             utilities.wait(1000);
         }
+        utilities.flywheelOff();
     }
 
     public void blueOnePart()
@@ -332,9 +346,11 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
-        drive.followTrajectory(bluePark1Trajectory);
+//        drive.followTrajectory(bluePark1Trajectory);
     }
     public void blueTwoPart()
     {
@@ -350,9 +366,11 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
-        drive.followTrajectory(bluePark2Trajectory);
+//        drive.followTrajectory(bluePark2Trajectory);
     }
     public void blueThreePart()
     {
@@ -368,9 +386,11 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
-        drive.followTrajectory(bluePark3Trajectory);
+//        drive.followTrajectory(bluePark3Trajectory);
     }
 
     public void redOnePart()
@@ -387,9 +407,11 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
-        drive.followTrajectory(redPark1Trajectory);
+//        drive.followTrajectory(redPark1Trajectory);
     }
     public void redTwoPart()
     {
@@ -405,9 +427,11 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
-        drive.followTrajectory(redPark2Trajectory);
+//        drive.followTrajectory(redPark2Trajectory);
     }
     public void redThreePart()
     {
@@ -423,8 +447,10 @@ public class AutonSequences {
 
         // Shoot first ring
         utilities.shoot();
+        utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
-        drive.followTrajectory(redPark3Trajectory);
+//        drive.followTrajectory(redPark3Trajectory);
     }
 }

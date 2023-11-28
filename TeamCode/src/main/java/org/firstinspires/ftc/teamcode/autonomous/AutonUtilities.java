@@ -53,4 +53,5 @@ public class AutonUtilities
     {
         hardware.flywheel.setVelocity(velocity);
     }
+    public void flywheelOff() {hardware.flywheel.setPower(0);}
 }

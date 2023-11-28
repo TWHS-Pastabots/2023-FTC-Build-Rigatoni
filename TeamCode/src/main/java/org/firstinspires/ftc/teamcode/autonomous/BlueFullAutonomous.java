@@ -177,7 +177,7 @@ public class BlueFullAutonomous extends LinearOpMode
 
         // Scan sleeve
         ElapsedTime scanTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        while(scanTime.time() < 100)
+        while(scanTime.time() < 1000)
         {
             currentDetections = aprilTagDetectionPipeline.getLatestDetections();
             if(currentDetections.size() != 0)
