@@ -24,30 +24,23 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.system.Assert;
-import org.firstinspires.ftc.teamcode.teleop.Utilities;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Blue")
-public class BlueAutonomous extends LinearOpMode
+@Autonomous(name = "VisionDetection")
+public class VisionDetection extends LinearOpMode
 {
-    Hardware hardware;
-    AutonUtilities utilities;
-
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -75,11 +68,6 @@ public class BlueAutonomous extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        hardware = new Hardware();
-        Assert.assertNotNull(hardwareMap);
-        hardware.init(hardwareMap);
-        utilities = new AutonUtilities(hardware);
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -106,11 +94,9 @@ public class BlueAutonomous extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        ArrayList<AprilTagDetection> currentDetections;
-
         while (!isStarted() && !isStopRequested())
         {
-            currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
             {
@@ -145,6 +131,7 @@ public class BlueAutonomous extends LinearOpMode
                         tagToTelemetry(tagOfInterest);
                     }
                 }
+
             }
             else
             {
@@ -171,26 +158,18 @@ public class BlueAutonomous extends LinearOpMode
          * during the init loop.
          */
 
-        // Deploy intake
-        utilities.deployIntake();
-        utilities.wait(1000);
 
-        // Scan sleeve
-        ElapsedTime scanTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        while(scanTime.time() < 100)
+        /* Update the telemetry */
+        if(tagOfInterest != null)
         {
-            currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-            if(currentDetections.size() != 0)
-            {
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == one || tag.id == two || tag.id == three)
-                    {
-                        tagOfInterest = tag;
-                        break;
-                    }
-                }
-            }
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
+        }
+        else
+        {
+            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.update();
         }
 
         // Autonomous
