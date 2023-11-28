@@ -29,6 +29,9 @@ public class AutonSequences {
     final double RED_LOW_VELOCITY = 0;
 
     // Trajectories
+
+    // Blue Trajectories
+    Trajectory blueFirstShootTrajectory;
     Trajectory blueRing1PickupTrajectory;
     Trajectory blueRing2PickupTrajectory;
     Trajectory blueRing3PickupTrajectory;
@@ -36,12 +39,21 @@ public class AutonSequences {
     Trajectory blueFullPark1Trajectory;
     Trajectory blueFullPark2Trajectory;
     Trajectory blueFullPark3Trajectory;
-    Trajectory blueSinglePark1Trajectory;
-    Trajectory blueSinglePark2Trajectory;
-    Trajectory blueSinglePark3Trajectory;
-
-
-    Trajectory redRingPickupTrajectory;
+    Trajectory bluePartPark1Trajectory;
+    Trajectory bluePartPark2Trajectory;
+    Trajectory bluePartPark3Trajectory;
+    // Red Trajectories
+    Trajectory redFirstShootTrajectory;
+    Trajectory redRing1PickupTrajectory;
+    Trajectory redRing2PickupTrajectory;
+    Trajectory redRing3PickupTrajectory;
+    Trajectory redTripleShootTrajectory;
+    Trajectory redFullPark1Trajectory;
+    Trajectory redFullPark2Trajectory;
+    Trajectory redFullPark3Trajectory;
+    Trajectory redPartPark1Trajectory;
+    Trajectory redPartPark2Trajectory;
+    Trajectory redPartPark3Trajectory;
 
     // Blue Pose + Vector2d
     Pose2d blueStartPose = new Pose2d(10, -8, Math.toRadians(90));
@@ -71,10 +83,16 @@ public class AutonSequences {
 
     public void blueOneFull()
     {
+        drive.setPoseEstimate(blueStartPose);
+
         // Aim first ring
         utilities.aimLauncher(BLUE_MID_SERVO);
         // Set flywheel power
         utilities.flywheelVelocity(BLUE_MID_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(blueFirstShootTrajectory);
+
         // Shoot first ring
         utilities.shoot();
 
@@ -87,10 +105,16 @@ public class AutonSequences {
 
     public void blueTwoFull()
     {
+        drive.setPoseEstimate(blueStartPose);
+
         // Aim first ring
         utilities.aimLauncher(BLUE_LOW_SERVO);
         // Set flywheel power
         utilities.flywheelVelocity(BLUE_LOW_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(blueFirstShootTrajectory);
+
         // Shoot first ring
         utilities.shoot();
 
@@ -103,10 +127,16 @@ public class AutonSequences {
 
     public void blueThreeFull()
     {
+        drive.setPoseEstimate(blueStartPose);
+
         // Aim first ring
         utilities.aimLauncher(BLUE_HIGH_SERVO);
         // Set flywheel power
         utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(blueFirstShootTrajectory);
+
         // Shoot first ring
         utilities.shoot();
 
@@ -120,7 +150,6 @@ public class AutonSequences {
     public void blueIntake()
     {
         // Pick up three rings
-        drive.setPoseEstimate(blueStartPose);
         drive.followTrajectory(blueRing1PickupTrajectory);
         utilities.intake(4000);
         drive.followTrajectory(blueRing2PickupTrajectory);
@@ -138,4 +167,197 @@ public class AutonSequences {
         }
     }
 
+    public void redOneFull()
+    {
+        drive.setPoseEstimate(redStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(RED_MID_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(RED_MID_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(redFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Pick up and shoot other rings
+        redIntake();
+
+        // Park
+        drive.followTrajectory(redFullPark1Trajectory);
+    }
+    public void redTwoFull()
+    {
+        drive.setPoseEstimate(redStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(RED_LOW_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(RED_LOW_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(redFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Pick up and shoot other rings
+        redIntake();
+
+        // Park
+        drive.followTrajectory(redFullPark2Trajectory);
+    }
+    public void redThreeFull()
+    {
+        drive.setPoseEstimate(redStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(RED_HIGH_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(RED_HIGH_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(redFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Pick up and shoot other rings
+        redIntake();
+
+        // Park
+        drive.followTrajectory(redFullPark3Trajectory);
+    }
+
+    public void redIntake()
+    {
+        // Pick up three rings
+        drive.followTrajectory(redRing1PickupTrajectory);
+        utilities.intake(4000);
+        drive.followTrajectory(redRing2PickupTrajectory);
+        utilities.intake(4000);
+        drive.followTrajectory(redRing3PickupTrajectory);
+        utilities.intake(4000);
+        drive.followTrajectory(redTripleShootTrajectory);
+
+        // Aim
+
+        // Shoot three rings into high goal
+        for(int i = 0; i<3; i++)
+        {
+            utilities.shoot();
+        }
+    }
+
+    public void blueOnePart()
+    {
+        drive.setPoseEstimate(blueStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(BLUE_MID_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(BLUE_MID_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(blueFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Park
+        drive.followTrajectory(bluePartPark1Trajectory);
+    }
+    public void blueTwoPart()
+    {
+        drive.setPoseEstimate(blueStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(BLUE_LOW_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(BLUE_LOW_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(blueFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Park
+        drive.followTrajectory(bluePartPark2Trajectory);
+    }
+    public void blueThreePart()
+    {
+        drive.setPoseEstimate(blueStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(BLUE_HIGH_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(blueFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Park
+        drive.followTrajectory(bluePartPark3Trajectory);
+    }
+
+    public void redOnePart()
+    {
+        drive.setPoseEstimate(redStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(RED_MID_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(RED_MID_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(redFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Park
+        drive.followTrajectory(redPartPark1Trajectory);
+    }
+    public void redTwoPart()
+    {
+        drive.setPoseEstimate(redStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(RED_LOW_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(RED_LOW_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(redFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Park
+        drive.followTrajectory(redPartPark2Trajectory);
+    }
+    public void redThreePart()
+    {
+        drive.setPoseEstimate(redStartPose);
+
+        // Aim first ring
+        utilities.aimLauncher(RED_HIGH_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(RED_HIGH_VELOCITY);
+
+        // Trajectory to shooting position
+        drive.followTrajectory(redFirstShootTrajectory);
+
+        // Shoot first ring
+        utilities.shoot();
+
+        // Park
+        drive.followTrajectory(redPartPark3Trajectory);
+    }
 }
