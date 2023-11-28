@@ -36,33 +36,29 @@ public class AutonSequences {
     Trajectory blueRing2PickupTrajectory;
     Trajectory blueRing3PickupTrajectory;
     Trajectory blueTripleShootTrajectory;
-    Trajectory blueFullPark1Trajectory;
-    Trajectory blueFullPark2Trajectory;
-    Trajectory blueFullPark3Trajectory;
-    Trajectory bluePartPark1Trajectory;
-    Trajectory bluePartPark2Trajectory;
-    Trajectory bluePartPark3Trajectory;
+    Trajectory bluePark1Trajectory;
+    Trajectory bluePark2Trajectory;
+    Trajectory bluePark3Trajectory;
     // Red Trajectories
     Trajectory redFirstShootTrajectory;
     Trajectory redRing1PickupTrajectory;
     Trajectory redRing2PickupTrajectory;
     Trajectory redRing3PickupTrajectory;
     Trajectory redTripleShootTrajectory;
-    Trajectory redFullPark1Trajectory;
-    Trajectory redFullPark2Trajectory;
-    Trajectory redFullPark3Trajectory;
-    Trajectory redPartPark1Trajectory;
-    Trajectory redPartPark2Trajectory;
-    Trajectory redPartPark3Trajectory;
+    Trajectory redPark1Trajectory;
+    Trajectory redPark2Trajectory;
+    Trajectory redPark3Trajectory;
 
     // Blue Pose + Vector2d
-    Pose2d blueStartPose = new Pose2d(10, -8, Math.toRadians(90));
-    Vector2d blueHighShoot = new Vector2d(10, -8);
-    Vector2d blueMidShoot = new Vector2d(10, -8);
-    Vector2d blueLowShoot = new Vector2d(10, -8);
-    Vector2d blueFirstRing = new Vector2d(10, -8);
-    Vector2d blueSecondRing = new Vector2d(10, -8);
-    Vector2d blueThirdRing = new Vector2d(10, -8);
+    Pose2d blueStartPose = new Pose2d(-64, -48, Math.toRadians(0));
+    Vector2d blueShoot = new Vector2d(-24, -12);
+    Vector2d blueTowardsFirstRing = new Vector2d(-48, -36);
+    Vector2d blueFirstRing = new Vector2d(-48, -72);
+    Vector2d blueSecondRing = new Vector2d(-24, -72);
+    Vector2d blueThirdRing = new Vector2d(48, -72);
+    Vector2d bluePark1 = new Vector2d(36, -36);
+    Vector2d bluePark2 = new Vector2d(12, -60);
+    Vector2d bluePark3 = new Vector2d(-12, -36);
 
 
 
@@ -74,8 +70,31 @@ public class AutonSequences {
         this.utilities = utilities;
         drive = new SampleMecanumDrive(hardwareMap);
 
-        blueRing1PickupTrajectory = drive.trajectoryBuilder(blueStartPose)
-                .splineTo(blueFirstRing, Math.toRadians(90))
+        // Blue trajectories
+        blueFirstShootTrajectory = drive.trajectoryBuilder(blueStartPose)
+                .splineTo(blueShoot, Math.toRadians(0))
+                .build();
+        blueRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
+                .splineTo(blueTowardsFirstRing, Math.toRadians(-90))
+                .splineTo(blueFirstRing, Math.toRadians(-90))
+                .build();
+        blueRing2PickupTrajectory = drive.trajectoryBuilder(new Pose2d(blueFirstRing, Math.toRadians(-90)))
+                .splineTo(blueSecondRing, Math.toRadians(0))
+                .build();
+        blueRing3PickupTrajectory = drive.trajectoryBuilder(new Pose2d(blueSecondRing, Math.toRadians(0)))
+                .splineTo(blueThirdRing, Math.toRadians(0))
+                .build();
+        blueTripleShootTrajectory = drive.trajectoryBuilder(new Pose2d(blueThirdRing, Math.toRadians(0)))
+                .splineTo(blueShoot, Math.toRadians(0))
+                .build();
+        bluePark1Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
+                .splineTo(bluePark1, Math.toRadians(90))
+                .build();
+        bluePark2Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
+                .splineTo(bluePark2, Math.toRadians(90))
+                .build();
+        bluePark3Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
+                .splineTo(bluePark3, Math.toRadians(90))
                 .build();
 
 
@@ -100,7 +119,7 @@ public class AutonSequences {
         blueIntake();
 
         // Park
-        drive.followTrajectory(blueFullPark1Trajectory);
+        drive.followTrajectory(bluePark1Trajectory);
     }
 
     public void blueTwoFull()
@@ -122,7 +141,7 @@ public class AutonSequences {
         blueIntake();
 
         // Park
-        drive.followTrajectory(blueFullPark2Trajectory);
+        drive.followTrajectory(bluePark2Trajectory);
     }
 
     public void blueThreeFull()
@@ -144,7 +163,7 @@ public class AutonSequences {
         blueIntake();
 
         // Park
-        drive.followTrajectory(blueFullPark3Trajectory);
+        drive.followTrajectory(bluePark3Trajectory);
     }
 
     public void blueIntake()
@@ -186,7 +205,7 @@ public class AutonSequences {
         redIntake();
 
         // Park
-        drive.followTrajectory(redFullPark1Trajectory);
+        drive.followTrajectory(redPark1Trajectory);
     }
     public void redTwoFull()
     {
@@ -207,7 +226,7 @@ public class AutonSequences {
         redIntake();
 
         // Park
-        drive.followTrajectory(redFullPark2Trajectory);
+        drive.followTrajectory(redPark2Trajectory);
     }
     public void redThreeFull()
     {
@@ -228,7 +247,7 @@ public class AutonSequences {
         redIntake();
 
         // Park
-        drive.followTrajectory(redFullPark3Trajectory);
+        drive.followTrajectory(redPark3Trajectory);
     }
 
     public void redIntake()
@@ -267,7 +286,7 @@ public class AutonSequences {
         utilities.shoot();
 
         // Park
-        drive.followTrajectory(bluePartPark1Trajectory);
+        drive.followTrajectory(bluePark1Trajectory);
     }
     public void blueTwoPart()
     {
@@ -285,7 +304,7 @@ public class AutonSequences {
         utilities.shoot();
 
         // Park
-        drive.followTrajectory(bluePartPark2Trajectory);
+        drive.followTrajectory(bluePark2Trajectory);
     }
     public void blueThreePart()
     {
@@ -303,7 +322,7 @@ public class AutonSequences {
         utilities.shoot();
 
         // Park
-        drive.followTrajectory(bluePartPark3Trajectory);
+        drive.followTrajectory(bluePark3Trajectory);
     }
 
     public void redOnePart()
@@ -322,7 +341,7 @@ public class AutonSequences {
         utilities.shoot();
 
         // Park
-        drive.followTrajectory(redPartPark1Trajectory);
+        drive.followTrajectory(redPark1Trajectory);
     }
     public void redTwoPart()
     {
@@ -340,7 +359,7 @@ public class AutonSequences {
         utilities.shoot();
 
         // Park
-        drive.followTrajectory(redPartPark2Trajectory);
+        drive.followTrajectory(redPark2Trajectory);
     }
     public void redThreePart()
     {
@@ -358,6 +377,6 @@ public class AutonSequences {
         utilities.shoot();
 
         // Park
-        drive.followTrajectory(redPartPark3Trajectory);
+        drive.followTrajectory(redPark3Trajectory);
     }
 }
