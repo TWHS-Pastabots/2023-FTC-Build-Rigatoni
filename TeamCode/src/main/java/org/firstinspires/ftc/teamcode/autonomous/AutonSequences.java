@@ -13,20 +13,22 @@ public class AutonSequences {
 
     SampleMecanumDrive drive;
     AutonUtilities utilities;
-    
-    final double BLUE_HIGH_SERVO = 0;
-    final double BLUE_MID_SERVO = 0;
-    final double BLUE_LOW_SERVO = 0;
-    final double RED_HIGH_SERVO = 0;
-    final double RED_MID_SERVO = 0;
-    final double RED_LOW_SERVO = 0;
 
-    final double BLUE_HIGH_VELOCITY = 0;
-    final double BLUE_MID_VELOCITY = 0;
-    final double BLUE_LOW_VELOCITY = 0;
-    final double RED_HIGH_VELOCITY = 0;
-    final double RED_MID_VELOCITY = 0;
-    final double RED_LOW_VELOCITY = 0;
+    // Servo Positions (0.35 straight)
+    final double BLUE_HIGH_SERVO = 0.50;
+    final double BLUE_MID_SERVO = 0.40;
+    final double BLUE_LOW_SERVO = 0.30;
+    final double RED_HIGH_SERVO = 0.60;
+    final double RED_MID_SERVO = 0.40;
+    final double RED_LOW_SERVO = 0.50;
+
+    // Flywheel speeds
+    final double BLUE_HIGH_VELOCITY = 40;
+    final double BLUE_MID_VELOCITY = 40;
+    final double BLUE_LOW_VELOCITY = 40;
+    final double RED_HIGH_VELOCITY = 40;
+    final double RED_MID_VELOCITY = 40;
+    final double RED_LOW_VELOCITY = 40;
 
     // Trajectories
 
