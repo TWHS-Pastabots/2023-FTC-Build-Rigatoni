@@ -169,20 +169,26 @@ public class AutonSequences {
     public void blueIntake()
     {
         // Pick up three rings
+        utilities.intake(true);
         drive.followTrajectory(blueRing1PickupTrajectory);
-        utilities.intake(4000);
+        utilities.wait(1000);
         drive.followTrajectory(blueRing2PickupTrajectory);
-        utilities.intake(4000);
+        utilities.wait(1000);
         drive.followTrajectory(blueRing3PickupTrajectory);
-        utilities.intake(4000);
-        drive.followTrajectory(blueTripleShootTrajectory);
+        utilities.intake(false);
 
-        // Aim
+        // Aim ring
+        utilities.aimLauncher(BLUE_HIGH_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
+
+        drive.followTrajectory(blueTripleShootTrajectory);
 
         // Shoot three rings into high goal
         for(int i = 0; i<3; i++)
         {
             utilities.shoot();
+            utilities.wait(1000);
         }
     }
 
@@ -253,20 +259,26 @@ public class AutonSequences {
     public void redIntake()
     {
         // Pick up three rings
+        utilities.intake(true);
         drive.followTrajectory(redRing1PickupTrajectory);
-        utilities.intake(4000);
+        utilities.wait(1000);
         drive.followTrajectory(redRing2PickupTrajectory);
-        utilities.intake(4000);
+        utilities.wait(1000);
         drive.followTrajectory(redRing3PickupTrajectory);
-        utilities.intake(4000);
-        drive.followTrajectory(redTripleShootTrajectory);
+        utilities.intake(false);
 
-        // Aim
+        // Aim ring
+        utilities.aimLauncher(RED_HIGH_SERVO);
+        // Set flywheel power
+        utilities.flywheelVelocity(RED_HIGH_VELOCITY);
+
+        drive.followTrajectory(redTripleShootTrajectory);
 
         // Shoot three rings into high goal
         for(int i = 0; i<3; i++)
         {
             utilities.shoot();
+            utilities.wait(1000);
         }
     }
 
