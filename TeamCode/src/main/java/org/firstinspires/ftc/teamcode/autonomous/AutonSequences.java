@@ -13,7 +13,7 @@ public class AutonSequences {
 
     SampleMecanumDrive drive;
     AutonUtilities utilities;
-
+    
     final double BLUE_HIGH_SERVO = 0;
     final double BLUE_MID_SERVO = 0;
     final double BLUE_LOW_SERVO = 0;
@@ -60,10 +60,17 @@ public class AutonSequences {
     Vector2d bluePark2 = new Vector2d(12, -60);
     Vector2d bluePark3 = new Vector2d(-12, -36);
 
+    // Red Pose + Vector2d
+    Pose2d redStartPose = new Pose2d(-64, 48, Math.toRadians(0));
+    Vector2d redShoot = new Vector2d(-24, 12);
+    Vector2d redTowardsFirstRing = new Vector2d(-48, 36);
+    Vector2d redFirstRing = new Vector2d(-48, 72);
+    Vector2d redSecondRing = new Vector2d(-24, 72);
+    Vector2d redThirdRing = new Vector2d(48, 72);
+    Vector2d redPark1 = new Vector2d(36, 36);
+    Vector2d redPark2 = new Vector2d(12, 60);
+    Vector2d redPark3 = new Vector2d(-12, 36);
 
-
-    // Red Pose
-    Pose2d redStartPose = new Pose2d(10, -8, Math.toRadians(90));
 
     public AutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
     {
@@ -88,13 +95,40 @@ public class AutonSequences {
                 .splineTo(blueShoot, Math.toRadians(0))
                 .build();
         bluePark1Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
-                .splineTo(bluePark1, Math.toRadians(90))
+                .splineTo(bluePark1, Math.toRadians(-90))
                 .build();
         bluePark2Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
-                .splineTo(bluePark2, Math.toRadians(90))
+                .splineTo(bluePark2, Math.toRadians(-90))
                 .build();
         bluePark3Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
-                .splineTo(bluePark3, Math.toRadians(90))
+                .splineTo(bluePark3, Math.toRadians(-90))
+                .build();
+
+        // Red trajectories
+        redFirstShootTrajectory = drive.trajectoryBuilder(redStartPose)
+                .splineTo(redShoot, Math.toRadians(0))
+                .build();
+        redRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
+                .splineTo(redTowardsFirstRing, Math.toRadians(90))
+                .splineTo(redFirstRing, Math.toRadians(90))
+                .build();
+        redRing2PickupTrajectory = drive.trajectoryBuilder(new Pose2d(redFirstRing, Math.toRadians(90)))
+                .splineTo(redSecondRing, Math.toRadians(0))
+                .build();
+        redRing3PickupTrajectory = drive.trajectoryBuilder(new Pose2d(redSecondRing, Math.toRadians(0)))
+                .splineTo(redThirdRing, Math.toRadians(0))
+                .build();
+        redTripleShootTrajectory = drive.trajectoryBuilder(new Pose2d(redThirdRing, Math.toRadians(0)))
+                .splineTo(redShoot, Math.toRadians(0))
+                .build();
+        redPark1Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
+                .splineTo(redPark1, Math.toRadians(90))
+                .build();
+        redPark2Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
+                .splineTo(redPark2, Math.toRadians(90))
+                .build();
+        redPark3Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
+                .splineTo(redPark3, Math.toRadians(90))
                 .build();
 
 
