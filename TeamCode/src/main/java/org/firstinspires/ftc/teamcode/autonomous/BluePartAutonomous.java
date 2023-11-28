@@ -23,7 +23,6 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -32,21 +31,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
-import org.firstinspires.ftc.teamcode.teleop.Utilities;
+import org.firstinspires.ftc.teamcode.hardware.Hardware;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Blue")
-public class BlueAutonomous extends LinearOpMode
+@Autonomous(name = "BluePart")
+public class BluePartAutonomous extends LinearOpMode
 {
     Hardware hardware;
     AutonUtilities utilities;
+
+    AutonSequences sequences;
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -79,6 +78,7 @@ public class BlueAutonomous extends LinearOpMode
         Assert.assertNotNull(hardwareMap);
         hardware.init(hardwareMap);
         utilities = new AutonUtilities(hardware);
+        sequences = new AutonSequences(hardwareMap, utilities);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -198,16 +198,19 @@ public class BlueAutonomous extends LinearOpMode
         {
             telemetry.addLine("Signal sleeve position 1");
             telemetry.update();
+            sequences.blueOnePart();
         }
         else if(tagOfInterest.id == two)
         {
             telemetry.addLine("Signal sleeve position 2");
             telemetry.update();
+            sequences.blueTwoPart();
         }
         else if(tagOfInterest.id == three)
         {
             telemetry.addLine("Signal sleeve position 3");
             telemetry.update();
+            sequences.blueThreePart();
         }
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
