@@ -37,6 +37,13 @@ public class AutonUtilities
         ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         while (time.time() < intakeTime){}
     }
+    public void intake(boolean on)
+    {
+        if(on)
+            hardware.intake.setPower(1);
+        else
+            hardware.intake.setPower(0);
+    }
 
     public void aimLauncher(double position)
     {
