@@ -27,8 +27,15 @@ public class AutonUtilities
 
     public void deployIntake()
     {
-        hardware.intakeDeployServo1.setPosition(0.05);
-        hardware.intakeDeployServo2.setPosition(0.65);
+        hardware.intakeDeployServo1.setPosition(0.10);
+        hardware.intakeDeployServo2.setPosition(0.60);
+    }
+
+    public void retractIntake()
+    {
+        hardware.intakeDeployServo1.setPosition(0.50);
+        hardware.intakeDeployServo2.setPosition(0.20);
+
     }
 
     public void intake(int intakeTime)
@@ -61,5 +68,5 @@ public class AutonUtilities
             hardware.flywheel.setVelocity(velocity);
         }
     }
-    public void flywheelOff() {hardware.flywheel.setPower(0);}
+    public void flywheelOff() {hardware.flywheel.setVelocity(0);}
 }
