@@ -53,5 +53,13 @@ public class AutonUtilities
     {
         hardware.flywheel.setVelocity(velocity);
     }
+    public void flywheelVelocity(double velocity, int duration)
+    {
+        ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while(time.time() < duration)
+        {
+            hardware.flywheel.setVelocity(velocity);
+        }
+    }
     public void flywheelOff() {hardware.flywheel.setPower(0);}
 }
