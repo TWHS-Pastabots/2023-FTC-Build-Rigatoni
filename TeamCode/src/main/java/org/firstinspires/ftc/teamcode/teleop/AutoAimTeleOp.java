@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.teleop.Utilities;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
@@ -65,6 +68,8 @@ public class AutoAimTeleOp extends OpMode {
     double initYaw;
     double adjustedYaw;
 
+    SampleMecanumDrive drive;
+
     @Override
     public void init() {
         hardware = new Hardware();
@@ -86,6 +91,10 @@ public class AutoAimTeleOp extends OpMode {
         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = angles.firstAngle;
 
+        drive = new SampleMecanumDrive(hardwareMap);
+
+        drive.setPoseEstimate(new Pose2d(36, -36, Math.toRadians(-90)));
+
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
     }
@@ -104,6 +113,7 @@ public class AutoAimTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        drive.update();
         drive();
         intake();
         launcher();
@@ -315,6 +325,20 @@ public class AutoAimTeleOp extends OpMode {
         // Launcher aim
         hardware.launcherAimServo.setPosition(launcherAimServoPosition);
     }
+
+    public void calculateLauncherAimServoPosition()
+    {
+        // Retrieve your pose
+        Pose2d myPose = drive.getPoseEstimate();
+
+        telemetry.addData("x", myPose.getX());
+        telemetry.addData("y", myPose.getY());
+        telemetry.addData("heading", myPose.getHeading());
+    }
+    public void calculateFlywheelSpeed()
+    {
+    }
+
 
     private void arm()
     {
