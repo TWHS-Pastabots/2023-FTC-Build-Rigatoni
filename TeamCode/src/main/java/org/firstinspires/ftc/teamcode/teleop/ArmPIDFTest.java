@@ -153,15 +153,15 @@ public class ArmPIDFTest extends OpMode
 
     private void arm()
     {
-        if(gamepad2.right_bumper)
+        if(gamepad1.right_trigger > 0.1)
         {
             armPosition = 125;
         }
-        else if(gamepad2.left_bumper)
+        else if(gamepad1.left_trigger > 0.1)
         {
             armPosition = 190;
         }
-        else if(gamepad2.circle)
+        else if(gamepad1.share)
         {
             armPosition = 0;
         }
