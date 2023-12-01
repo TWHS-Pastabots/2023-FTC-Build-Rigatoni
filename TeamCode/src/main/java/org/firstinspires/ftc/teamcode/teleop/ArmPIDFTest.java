@@ -148,7 +148,6 @@ public class ArmPIDFTest extends OpMode
                 buttonTime.reset();
             }
         }
-        pidfCoefficients = new PIDFCoefficients(kP, kI, kD, kF * kFMultiplier);
     }
 
     private void arm()
@@ -170,7 +169,7 @@ public class ArmPIDFTest extends OpMode
         hardware.arm.setTargetPosition(armPosition);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.25);
-        hardware.arm.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfCoefficients);
+        hardware.arm.setVelocityPIDFCoefficients(kP, kI, kD, kF * kFMultiplier);
 
     }
 }
