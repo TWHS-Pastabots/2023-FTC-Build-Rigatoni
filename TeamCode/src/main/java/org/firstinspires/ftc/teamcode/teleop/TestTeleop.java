@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.teleop.Utilities;
 public class TestTeleop extends OpMode {
     Hardware hardware;
     Utilities utilities;
+    double maxVelocity;
 
     @Override
     public void init() {
@@ -26,6 +27,7 @@ public class TestTeleop extends OpMode {
 
         utilities = new Utilities(hardware);
 
+        maxVelocity = 0;
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
     }
@@ -40,8 +42,34 @@ public class TestTeleop extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("IMU Position", String.valueOf(hardware.imu.getPosition()));
-        telemetry.addData("Arm Position", hardware.arm.getCurrentPosition());
+        telemetry();
+        arm();
+        launcher();
+    }
+    public void telemetry()
+    {
+        telemetry.addData("Max arm velocity", maxVelocity);
+        telemetry.addData("Flywheel velocity", hardware.flywheel.getVelocity());
         telemetry.update();
+    }
+    public void arm()
+    {
+        hardware.arm.setPower(-gamepad2.right_stick_y);
+        double currentVelocity = hardware.arm.getVelocity();
+        if(currentVelocity > maxVelocity)
+        {
+            maxVelocity = currentVelocity;
+        }
+    }
+    public void launcher()
+    {
+        if(gamepad2.cross)
+        {
+            hardware.flywheel.setVelocity(400);
+        }
+        if(gamepad2.circle)
+        {
+            hardware.flywheel.setPower(1);
+        }
     }
 }

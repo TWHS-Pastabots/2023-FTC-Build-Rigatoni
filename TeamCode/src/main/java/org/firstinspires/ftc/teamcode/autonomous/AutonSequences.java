@@ -18,7 +18,7 @@ public class AutonSequences {
     final double BLUE_HIGH_SERVO = 0.60;
 
     final double BLUE_MID_SERVO = 0.27;
-    final double BLUE_LOW_SERVO = 0.36;
+    final double BLUE_LOW_SERVO = 0.36; // Done
     final double RED_HIGH_SERVO = 0.55;
     final double RED_MID_SERVO = 0.40;
     final double RED_LOW_SERVO = 0.50;
@@ -26,7 +26,7 @@ public class AutonSequences {
     // Flywheel speeds
     final double BLUE_HIGH_VELOCITY = 340;
     final double BLUE_MID_VELOCITY = 400;
-    final double BLUE_LOW_VELOCITY = 340;
+    final double BLUE_LOW_VELOCITY = 340; // Done
     final double RED_HIGH_VELOCITY = 340;
     final double RED_MID_VELOCITY = 340;
     final double RED_LOW_VELOCITY = 340;
@@ -38,6 +38,9 @@ public class AutonSequences {
 
     // Blue Trajectories
     Trajectory blueFirstShootTrajectory;
+    Trajectory blueFirstShoot1Trajectory;
+    Trajectory blueFirstShoot2Trajectory;
+    Trajectory blueFirstShoot3Trajectory;
     Trajectory blueRing1PickupTrajectory;
     Trajectory blueRing2PickupTrajectory;
     Trajectory blueRing3PickupTrajectory;
@@ -47,6 +50,9 @@ public class AutonSequences {
     Trajectory bluePark3Trajectory;
     // Red Trajectories
     Trajectory redFirstShootTrajectory;
+    Trajectory redFirstShoot1Trajectory;
+    Trajectory redFirstShoot2Trajectory;
+    Trajectory redFirstShoot3Trajectory;
     Trajectory redRing1PickupTrajectory;
     Trajectory redRing2PickupTrajectory;
     Trajectory redRing3PickupTrajectory;
@@ -58,6 +64,9 @@ public class AutonSequences {
     // Blue Pose + Vector2d
     Pose2d blueStartPose = new Pose2d(-64, -48, Math.toRadians(0));
     Vector2d blueShoot = new Vector2d(-24, -18);
+    Vector2d blue1Shoot = new Vector2d(-24, -18);
+    Vector2d blue2Shoot = new Vector2d(-24, -18);
+    Vector2d blue3Shoot = new Vector2d(-24, -18);
     Vector2d blueTowardsFirstRing = new Vector2d(-48, -36);
     Vector2d blueFirstRing = new Vector2d(-48, -72);
     Vector2d blueSecondRing = new Vector2d(-24, -72);
@@ -69,6 +78,9 @@ public class AutonSequences {
     // Red Pose + Vector2d
     Pose2d redStartPose = new Pose2d(-64, 48, Math.toRadians(0));
     Vector2d redShoot = new Vector2d(-24, 12);
+    Vector2d red1Shoot = new Vector2d(-24, 12);
+    Vector2d red2Shoot = new Vector2d(-24, 12);
+    Vector2d red3Shoot = new Vector2d(-24, 12);
     Vector2d redTowardsFirstRing = new Vector2d(-48, 36);
     Vector2d redFirstRing = new Vector2d(-48, 72);
     Vector2d redSecondRing = new Vector2d(-24, 72);
@@ -86,6 +98,15 @@ public class AutonSequences {
         // Blue trajectories
         blueFirstShootTrajectory = drive.trajectoryBuilder(blueStartPose)
                 .splineTo(blueShoot, Math.toRadians(0))
+                .build();
+        blueFirstShoot1Trajectory = drive.trajectoryBuilder(blueStartPose)
+                .splineTo(blue1Shoot, Math.toRadians(0))
+                .build();
+        blueFirstShoot2Trajectory = drive.trajectoryBuilder(blueStartPose)
+                .splineTo(blue2Shoot, Math.toRadians(0))
+                .build();
+        blueFirstShoot3Trajectory = drive.trajectoryBuilder(blueStartPose)
+                .splineTo(blue3Shoot, Math.toRadians(0))
                 .build();
         blueRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
                 .splineTo(blueTowardsFirstRing, Math.toRadians(-90))
@@ -113,6 +134,15 @@ public class AutonSequences {
         // Red trajectories
         redFirstShootTrajectory = drive.trajectoryBuilder(redStartPose)
                 .splineTo(redShoot, Math.toRadians(0))
+                .build();
+        redFirstShoot1Trajectory = drive.trajectoryBuilder(redStartPose)
+                .splineTo(red1Shoot, Math.toRadians(0))
+                .build();
+        redFirstShoot2Trajectory = drive.trajectoryBuilder(redStartPose)
+                .splineTo(red2Shoot, Math.toRadians(0))
+                .build();
+        redFirstShoot3Trajectory = drive.trajectoryBuilder(redStartPose)
+                .splineTo(red3Shoot, Math.toRadians(0))
                 .build();
         redRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
                 .splineTo(redTowardsFirstRing, Math.toRadians(90))
@@ -256,7 +286,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(RED_MID_VELOCITY, FIRST_SHOT_FLYWHEEL_DURATION);
 
         // Trajectory to shooting position
-        drive.followTrajectory(redFirstShootTrajectory);
+        drive.followTrajectory(redFirstShoot1Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -279,7 +309,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(RED_LOW_VELOCITY, FIRST_SHOT_FLYWHEEL_DURATION);
 
         // Trajectory to shooting position
-        drive.followTrajectory(redFirstShootTrajectory);
+        drive.followTrajectory(redFirstShoot2Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -302,7 +332,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(RED_HIGH_VELOCITY, FIRST_SHOT_FLYWHEEL_DURATION);
 
         // Trajectory to shooting position
-        drive.followTrajectory(redFirstShootTrajectory);
+        drive.followTrajectory(redFirstShoot3Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -352,7 +382,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(BLUE_MID_VELOCITY);
 
         // Trajectory to shooting position
-        drive.followTrajectory(blueFirstShootTrajectory);
+        drive.followTrajectory(blueFirstShoot1Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -373,7 +403,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(BLUE_LOW_VELOCITY);
 
         // Trajectory to shooting position
-        drive.followTrajectory(blueFirstShootTrajectory);
+        drive.followTrajectory(blueFirstShoot2Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -394,7 +424,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
 
         // Trajectory to shooting position
-        drive.followTrajectory(blueFirstShootTrajectory);
+        drive.followTrajectory(blueFirstShoot3Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -416,7 +446,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(RED_MID_VELOCITY, FIRST_SHOT_FLYWHEEL_DURATION);
 
         // Trajectory to shooting position
-        drive.followTrajectory(redFirstShootTrajectory);
+        drive.followTrajectory(redFirstShoot1Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -436,7 +466,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(RED_LOW_VELOCITY, FIRST_SHOT_FLYWHEEL_DURATION);
 
         // Trajectory to shooting position
-        drive.followTrajectory(redFirstShootTrajectory);
+        drive.followTrajectory(redFirstShoot2Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -456,7 +486,7 @@ public class AutonSequences {
         utilities.flywheelVelocity(RED_HIGH_VELOCITY, FIRST_SHOT_FLYWHEEL_DURATION);
 
         // Trajectory to shooting position
-        drive.followTrajectory(redFirstShootTrajectory);
+        drive.followTrajectory(redFirstShoot3Trajectory);
 
         // Shoot first ring
         utilities.shoot();

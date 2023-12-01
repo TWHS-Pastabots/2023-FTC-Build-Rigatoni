@@ -23,15 +23,12 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.system.Assert;
-import org.firstinspires.ftc.teamcode.hardware.Hardware;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -39,14 +36,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "BluePart")
-public class BluePartAutonomous extends LinearOpMode
+@Autonomous(name = "VisionTest")
+public class VisionTest extends LinearOpMode
 {
-    Hardware hardware;
-    AutonUtilities utilities;
-
-    AutonSequences sequences;
-
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -74,12 +66,6 @@ public class BluePartAutonomous extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        hardware = new Hardware();
-        Assert.assertNotNull(hardwareMap);
-        hardware.init(hardwareMap);
-        utilities = new AutonUtilities(hardware);
-        sequences = new AutonSequences(hardwareMap, utilities);
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -106,11 +92,9 @@ public class BluePartAutonomous extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        ArrayList<AprilTagDetection> currentDetections;
-
         while (!isStarted() && !isStopRequested())
         {
-            currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
             {
@@ -128,12 +112,25 @@ public class BluePartAutonomous extends LinearOpMode
 
                 if(tagFound)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
+                    if(tagOfInterest.id == one)
+                    {
+                        telemetry.addLine("Detected position 1");
+                        telemetry.update();
+                    }
+                    else if(tagOfInterest.id == two)
+                    {
+                        telemetry.addLine("Detected position 2");
+                        telemetry.update();
+                    }
+                    else if(tagOfInterest.id == three)
+                    {
+                        telemetry.addLine("Detected position 3");
+                        telemetry.update();
+                    }
                 }
                 else
                 {
-                    telemetry.addLine("Don't see tag of interest :(");
+                    telemetry.addLine("Don't see tag of interest");
 
                     if(tagOfInterest == null)
                     {
@@ -141,14 +138,28 @@ public class BluePartAutonomous extends LinearOpMode
                     }
                     else
                     {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
+                        if(tagOfInterest.id == one)
+                        {
+                            telemetry.addLine("Detected position 1");
+                            telemetry.update();
+                        }
+                        else if(tagOfInterest.id == two)
+                        {
+                            telemetry.addLine("Detected position 2");
+                            telemetry.update();
+                        }
+                        else if(tagOfInterest.id == three)
+                        {
+                            telemetry.addLine("Detected position 3");
+                            telemetry.update();
+                        }
                     }
                 }
+
             }
             else
             {
-                telemetry.addLine("Don't see tag of interest :(");
+                telemetry.addLine("Don't see tag of interest");
 
                 if(tagOfInterest == null)
                 {
@@ -156,8 +167,21 @@ public class BluePartAutonomous extends LinearOpMode
                 }
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
+                    if(tagOfInterest.id == one)
+                    {
+                        telemetry.addLine("Detected position 1");
+                        telemetry.update();
+                    }
+                    else if(tagOfInterest.id == two)
+                    {
+                        telemetry.addLine("Detected position 2");
+                        telemetry.update();
+                    }
+                    else if(tagOfInterest.id == three)
+                    {
+                        telemetry.addLine("Detected position 3");
+                        telemetry.update();
+                    }
                 }
 
             }
@@ -171,50 +195,35 @@ public class BluePartAutonomous extends LinearOpMode
          * during the init loop.
          */
 
-        // Deploy intake
-        utilities.deployIntake();
 
-        // Scan sleeve
-        if(tagOfInterest == null)
+        /* Update the telemetry */
+        if(tagOfInterest != null)
         {
-            ElapsedTime scanTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-            while(scanTime.time() < 2000)
-            {
-                telemetry.addData("time", scanTime.time());
-                telemetry.update();
-                currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-                if(currentDetections.size() != 0)
-                {
-                    for(AprilTagDetection tag : currentDetections)
-                    {
-                        if(tag.id == one || tag.id == two || tag.id == three)
-                        {
-                            tagOfInterest = tag;
-                            break;
-                        }
-                    }
-                }
-            }
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
+        }
+        else
+        {
+            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.update();
         }
 
         // Autonomous
-        if(tagOfInterest == null || tagOfInterest.id == two)
-        {
-            telemetry.addLine("Signal sleeve position 2");
-            telemetry.update();
-            sequences.blueTwoPart();
-        }
-        else if(tagOfInterest.id == one)
+        if(tagOfInterest == null || tagOfInterest.id == one)
         {
             telemetry.addLine("Signal sleeve position 1");
             telemetry.update();
-            sequences.blueOnePart();
+        }
+        else if(tagOfInterest.id == two)
+        {
+            telemetry.addLine("Signal sleeve position 2");
+            telemetry.update();
         }
         else if(tagOfInterest.id == three)
         {
             telemetry.addLine("Signal sleeve position 3");
             telemetry.update();
-            sequences.blueThreePart();
         }
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
