@@ -77,17 +77,17 @@ public class AutonSequences {
 
     // Red Pose + Vector2d
     Pose2d redStartPose = new Pose2d(-64, 48, Math.toRadians(0));
-    Vector2d redShoot = new Vector2d(-24, 12);
-    Vector2d red1Shoot = new Vector2d(-24, 12);
-    Vector2d red2Shoot = new Vector2d(-24, 12);
-    Vector2d red3Shoot = new Vector2d(-24, 12);
+    Vector2d redShoot = new Vector2d(-24, 18);
+    Vector2d red1Shoot = new Vector2d(-24, 18);
+    Vector2d red2Shoot = new Vector2d(-24, 18);
+    Vector2d red3Shoot = new Vector2d(-24, 18);
     Vector2d redTowardsFirstRing = new Vector2d(-48, 36);
     Vector2d redFirstRing = new Vector2d(-48, 72);
     Vector2d redSecondRing = new Vector2d(-24, 72);
-    Vector2d redThirdRing = new Vector2d(48, 72);
-    Vector2d redPark1 = new Vector2d(36, 36);
-    Vector2d redPark2 = new Vector2d(12, 60);
-    Vector2d redPark3 = new Vector2d(-12, 36);
+    Vector2d redThirdRing = new Vector2d(42, 72);
+    Vector2d redPark1 = new Vector2d(32, 36);
+    Vector2d redPark2 = new Vector2d(8, 58);
+    Vector2d redPark3 = new Vector2d(-6, 36);
 
 
     public AutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
@@ -166,8 +166,6 @@ public class AutonSequences {
         redPark3Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
                 .splineTo(redPark3, Math.toRadians(90))
                 .build();
-
-
     }
 
     public void blueOneFull()
@@ -252,13 +250,11 @@ public class AutonSequences {
         // Pick up three rings
         utilities.intake(true);
         drive.followTrajectory(blueRing1PickupTrajectory);
-        utilities.wait(500);
+//        utilities.wait(500);
         drive.followTrajectory(blueRing2PickupTrajectory);
-        utilities.wait(500);
+//        utilities.wait(500);
         drive.followTrajectory(blueRing3PickupTrajectory);
-        utilities.wait(500);
-        utilities.intake(false);
-        utilities.retractIntake();
+//        utilities.wait(500);
 
         // Aim ring
         utilities.aimLauncher(BLUE_HIGH_SERVO);
@@ -266,6 +262,9 @@ public class AutonSequences {
         utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
 
         drive.followTrajectory(blueTripleShootTrajectory);
+        // Turn off intake
+        utilities.intake(false);
+        utilities.retractIntake();
 
         // Shoot three rings into high goal
         for(int i = 0; i<3; i++)
@@ -351,18 +350,21 @@ public class AutonSequences {
         // Pick up three rings
         utilities.intake(true);
         drive.followTrajectory(redRing1PickupTrajectory);
-        utilities.wait(1000);
+//        utilities.wait(1000);
         drive.followTrajectory(redRing2PickupTrajectory);
-        utilities.wait(1000);
+//        utilities.wait(1000);
         drive.followTrajectory(redRing3PickupTrajectory);
-        utilities.intake(false);
+
 
         // Aim ring
         utilities.aimLauncher(RED_HIGH_SERVO);
         // Set flywheel power
-        utilities.flywheelVelocity(RED_HIGH_VELOCITY, MULTI_SHOT_FLYWHEEL_DURATION);
+        utilities.flywheelVelocity(RED_HIGH_VELOCITY);
 
         drive.followTrajectory(redTripleShootTrajectory);
+        // Turn off intake
+        utilities.intake(false);
+        utilities.retractIntake();
 
         // Shoot three rings into high goal
         for(int i = 0; i<3; i++)
@@ -451,6 +453,7 @@ public class AutonSequences {
         // Shoot first ring
         utilities.shoot();
         utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
         drive.followTrajectory(redPark1Trajectory);
@@ -471,6 +474,7 @@ public class AutonSequences {
         // Shoot first ring
         utilities.shoot();
         utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
         drive.followTrajectory(redPark2Trajectory);
@@ -491,6 +495,7 @@ public class AutonSequences {
         // Shoot first ring
         utilities.shoot();
         utilities.wait(1000);
+        utilities.flywheelOff();
 
         // Park
         drive.followTrajectory(redPark3Trajectory);
