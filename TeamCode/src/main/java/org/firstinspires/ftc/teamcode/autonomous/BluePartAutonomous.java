@@ -45,7 +45,7 @@ public class BluePartAutonomous extends LinearOpMode
     Hardware hardware;
     AutonUtilities utilities;
 
-    AutonSequences sequences;
+    BlueAutonSequences sequences;
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -78,7 +78,7 @@ public class BluePartAutonomous extends LinearOpMode
         Assert.assertNotNull(hardwareMap);
         hardware.init(hardwareMap);
         utilities = new AutonUtilities(hardware);
-        sequences = new AutonSequences(hardwareMap, utilities);
+        sequences = new BlueAutonSequences(hardwareMap, utilities);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);

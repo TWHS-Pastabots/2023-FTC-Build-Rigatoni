@@ -45,7 +45,7 @@ public class RedPartAutonomous extends LinearOpMode
     Hardware hardware;
     AutonUtilities utilities;
 
-    AutonSequences sequences;
+    RedAutonSequences sequences;
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -78,7 +78,7 @@ public class RedPartAutonomous extends LinearOpMode
         Assert.assertNotNull(hardwareMap);
         hardware.init(hardwareMap);
         utilities = new AutonUtilities(hardware);
-        sequences = new AutonSequences(hardwareMap, utilities);
+        sequences = new RedAutonSequences(hardwareMap, utilities);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -173,38 +173,42 @@ public class RedPartAutonomous extends LinearOpMode
 
         // Deploy intake
         utilities.deployIntake();
-        utilities.wait(1000);
 
         // Scan sleeve
-        ElapsedTime scanTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        while(scanTime.time() < 1000)
+        if(tagOfInterest == null)
         {
-            currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-            if(currentDetections.size() != 0)
+            ElapsedTime scanTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+            while(scanTime.time() < 2000)
             {
-                for(AprilTagDetection tag : currentDetections)
+                telemetry.addData("time", scanTime.time());
+                telemetry.update();
+                currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+                if(currentDetections.size() != 0)
                 {
-                    if(tag.id == one || tag.id == two || tag.id == three)
+                    for(AprilTagDetection tag : currentDetections)
                     {
-                        tagOfInterest = tag;
-                        break;
+                        if(tag.id == one || tag.id == two || tag.id == three)
+                        {
+                            tagOfInterest = tag;
+                            break;
+                        }
                     }
                 }
             }
         }
 
         // Autonomous
-        if(tagOfInterest == null || tagOfInterest.id == one)
-        {
-            telemetry.addLine("Signal sleeve position 1");
-            telemetry.update();
-            sequences.redOnePart();
-        }
-        else if(tagOfInterest.id == two)
+        if(tagOfInterest == null || tagOfInterest.id == two)
         {
             telemetry.addLine("Signal sleeve position 2");
             telemetry.update();
             sequences.redTwoPart();
+        }
+        else if(tagOfInterest.id == one)
+        {
+            telemetry.addLine("Signal sleeve position 1");
+            telemetry.update();
+            sequences.redOnePart();
         }
         else if(tagOfInterest.id == three)
         {
