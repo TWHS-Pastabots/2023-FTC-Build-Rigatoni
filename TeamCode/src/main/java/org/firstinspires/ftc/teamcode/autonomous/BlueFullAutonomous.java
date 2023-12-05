@@ -40,7 +40,6 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 import java.util.ArrayList;
 
-@Disabled
 @Autonomous(name = "BlueFull")
 public class BlueFullAutonomous extends LinearOpMode
 {
