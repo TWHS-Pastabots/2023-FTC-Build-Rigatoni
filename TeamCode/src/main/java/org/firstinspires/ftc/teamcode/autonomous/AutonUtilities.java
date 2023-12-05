@@ -30,6 +30,11 @@ public class AutonUtilities
         hardware.intakeDeployServo1.setPosition(0.10);
         hardware.intakeDeployServo2.setPosition(0.60);
     }
+    public void deployIntakeFully()
+    {
+        hardware.intakeDeployServo1.setPosition(0.05);
+        hardware.intakeDeployServo2.setPosition(0.65);
+    }
 
     public void retractIntake()
     {

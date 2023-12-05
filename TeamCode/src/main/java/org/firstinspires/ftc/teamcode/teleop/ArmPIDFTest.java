@@ -21,7 +21,7 @@ public class ArmPIDFTest extends OpMode
     double kP;
     double kI;
     double kD;
-    double kF;
+    double kF; // -30 * - kf multiplier
 
     double kFMultiplier;
 
