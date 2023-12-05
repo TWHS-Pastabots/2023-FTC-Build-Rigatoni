@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -49,7 +50,7 @@ public class Checkpoint4TeleOp extends OpMode {
     double flywheelSpeed;
 
     int armPosition;
-    final double ARM_POWER = 0.25;
+    final double ARM_POWER = 1;
 
     // ElapsedTime
     ElapsedTime flywheelTime;
@@ -59,6 +60,13 @@ public class Checkpoint4TeleOp extends OpMode {
     ElapsedTime intakeBackTime;
     ElapsedTime intakeDeployTime;
     ElapsedTime clawTime;
+
+    PIDFCoefficients pidfCoefficients;
+    final double kP = 20;
+    final double kI = 0;
+    final double kD = .1;
+    final double kF = -30;
+    double kFMultiplier;
 
     // Field oriented
     Orientation angles = new Orientation();
@@ -81,8 +89,8 @@ public class Checkpoint4TeleOp extends OpMode {
         flywheelSpeed = 1.0;
         armPosition = 0;
         hardware.arm.setTargetPosition(armPosition);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(ARM_POWER);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Setup field oriented
         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -355,10 +363,13 @@ public class Checkpoint4TeleOp extends OpMode {
             armPosition = 0; // Retracted
         }
 
+        calculateKFMultiplier();
+
         // Arm position
         hardware.arm.setTargetPosition(armPosition);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(ARM_POWER);
+        hardware.arm.setVelocityPIDFCoefficients(kP, kI, kD, kF * kFMultiplier);
 
         // Claw
         if(gamepad2.triangle && clawTime.time() >= 250)
@@ -366,5 +377,10 @@ public class Checkpoint4TeleOp extends OpMode {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
         }
+    }
+
+    public void calculateKFMultiplier() {
+        // Feedforwards based on force of gravity
+        kFMultiplier = Math.cos((hardware.arm.getCurrentPosition() - 5) * Math.PI / 144);
     }
 }
