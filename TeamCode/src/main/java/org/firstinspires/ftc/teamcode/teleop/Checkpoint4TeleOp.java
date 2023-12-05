@@ -344,15 +344,15 @@ public class Checkpoint4TeleOp extends OpMode {
     {
         if(gamepad2.right_bumper)
         {
-            armPosition = 125;
+            armPosition = 125; // Junction
         }
         else if(gamepad2.left_bumper)
         {
-            armPosition = 190;
+            armPosition = 190; // Ground
         }
         else if(gamepad2.circle)
         {
-            armPosition = 0;
+            armPosition = 0; // Retracted
         }
 
         // Arm position
