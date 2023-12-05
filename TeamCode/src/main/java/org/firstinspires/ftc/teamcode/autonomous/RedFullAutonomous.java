@@ -40,7 +40,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Disabled
 @Autonomous(name = "RedFull")
 public class RedFullAutonomous extends LinearOpMode
 {
