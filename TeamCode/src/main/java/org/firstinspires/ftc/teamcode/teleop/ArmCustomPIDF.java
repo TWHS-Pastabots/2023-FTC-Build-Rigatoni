@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
-@TeleOp(name="Checkpoint4")
+@TeleOp(name="ArmCustomPIDF")
 public class ArmCustomPIDF extends OpMode {
     Hardware hardware;
     Utilities utilities;
@@ -68,6 +68,7 @@ public class ArmCustomPIDF extends OpMode {
         telemetry.addData("Set point:: ", armTargetPosition);
         telemetry.addData("Actual position:: ", hardware.arm.getCurrentPosition());
         telemetry.addData("Power:: ", armPower);
+        telemetry.addData("Increment:: ", incrementMultiplier);
         telemetry.addData("kP:: ", kP);
         telemetry.addData("kI:: ", kI);
         telemetry.addData("kD:: ", kD);
@@ -139,21 +140,25 @@ public class ArmCustomPIDF extends OpMode {
 
     private void arm()
     {
-        if(gamepad2.right_bumper)
+        if(gamepad1.right_bumper)
         {
             armTargetPosition = 125; // Junction
         }
-        else if(gamepad2.left_bumper)
+        else if(gamepad1.left_bumper)
         {
             armTargetPosition = 190; // Ground
         }
-        else if(gamepad2.share)
+        else if(gamepad1.share)
         {
             armTargetPosition = 0; // Retracted
         }
 
         // Arm power
         armPower = pidfCalculation(armTargetPosition, hardware.arm.getCurrentPosition());
+        if(Math.abs(armPower) > 1)
+        {
+            armPower = 1 * Math.signum(armPower);
+        }
         hardware.arm.setPower(armPower);
     }
 
@@ -164,7 +169,7 @@ public class ArmCustomPIDF extends OpMode {
         double derivative = (error - lastError) / armTime.seconds();
         lastError = error;
         armTime.reset();
-        return Math.min((error * kP) + (derivative * kD) + (integralSum + kI) + (calculateKFMultiplier() * kF), 1.0);
+        return (error * kP) + (derivative * kD) + (integralSum * kI) + (calculateKFMultiplier() * kF);
     }
 
     public double calculateKFMultiplier() {
