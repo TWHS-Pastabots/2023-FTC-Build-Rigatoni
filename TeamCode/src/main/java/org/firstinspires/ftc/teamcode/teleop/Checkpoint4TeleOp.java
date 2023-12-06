@@ -363,24 +363,15 @@ public class Checkpoint4TeleOp extends OpMode {
             armPosition = 0; // Retracted
         }
 
-        calculateKFMultiplier();
-
         // Arm position
         hardware.arm.setTargetPosition(armPosition);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(ARM_POWER);
-        hardware.arm.setVelocityPIDFCoefficients(kP, kI, kD, kF * kFMultiplier);
-
         // Claw
-        if(gamepad2.triangle && clawTime.time() >= 500)
+        if(gamepad2.triangle && clawTime.time() >= 250)
         {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
         }
-    }
-
-    public void calculateKFMultiplier() {
-        // Feedforwards based on force of gravity
-        kFMultiplier = Math.cos((hardware.arm.getCurrentPosition() - 5) * Math.PI / 144);
     }
 }
