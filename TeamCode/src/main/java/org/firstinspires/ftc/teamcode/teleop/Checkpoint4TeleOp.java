@@ -87,6 +87,7 @@ public class Checkpoint4TeleOp extends OpMode {
         clawOpen = false;
         launcherAimServoPosition = 0;
         flywheelSpeed = 1.0;
+        hardware.flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Slightly higher maximum velocity
         armPosition = 0;
         hardware.arm.setTargetPosition(armPosition);
         hardware.arm.setPower(ARM_POWER);
@@ -368,7 +369,7 @@ public class Checkpoint4TeleOp extends OpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(ARM_POWER);
         // Claw
-        if(gamepad2.triangle && clawTime.time() >= 250)
+        if(gamepad2.triangle && clawTime.time() >= 500)
         {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
