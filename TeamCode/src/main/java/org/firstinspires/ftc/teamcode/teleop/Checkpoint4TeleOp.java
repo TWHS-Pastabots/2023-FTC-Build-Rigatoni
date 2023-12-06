@@ -372,7 +372,7 @@ public class Checkpoint4TeleOp extends OpMode {
         hardware.arm.setVelocityPIDFCoefficients(kP, kI, kD, kF * kFMultiplier);
 
         // Claw
-        if(gamepad2.triangle && clawTime.time() >= 250)
+        if(gamepad2.triangle && clawTime.time() >= 500)
         {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
