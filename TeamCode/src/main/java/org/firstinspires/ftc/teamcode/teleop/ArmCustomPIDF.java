@@ -16,14 +16,14 @@ public class ArmCustomPIDF extends OpMode {
 
 
     int armTargetPosition;
-
-    PIDFCoefficients pidfCoefficients;
     double kP = 0;
     double kI = 0;
     double kD = 0;
     double kF = 0;
     double integralSum;
     double lastError;
+
+    double armPower;
 
     double incrementMultiplier;
 
@@ -65,8 +65,13 @@ public class ArmCustomPIDF extends OpMode {
     }
 
     public void telemetry() {
-        telemetry.addData("Arm position:: ", armTargetPosition);
-        telemetry.addData("Arm position actual:: ", hardware.arm.getCurrentPosition());
+        telemetry.addData("Set point:: ", armTargetPosition);
+        telemetry.addData("Actual position:: ", hardware.arm.getCurrentPosition());
+        telemetry.addData("Power:: ", armPower);
+        telemetry.addData("kP:: ", kP);
+        telemetry.addData("kI:: ", kI);
+        telemetry.addData("kD:: ", kD);
+        telemetry.addData("kF:: ", kF);
         telemetry.update();
     }
 
@@ -148,7 +153,8 @@ public class ArmCustomPIDF extends OpMode {
         }
 
         // Arm power
-        hardware.arm.setPower(pidfCalculation(armTargetPosition, hardware.arm.getCurrentPosition()));
+        armPower = pidfCalculation(armTargetPosition, hardware.arm.getCurrentPosition());
+        hardware.arm.setPower(armPower);
     }
 
     public double pidfCalculation(int reference, int state)
