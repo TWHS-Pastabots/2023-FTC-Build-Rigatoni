@@ -13,14 +13,14 @@ public class RedAutonSequences {
     AutonUtilities utilities;
 
     // Servo Positions (0.35 straight)
-    final double RED_HIGH_SERVO = 0.55;
+    final double RED_HIGH_SERVO = 0.45;
     final double RED_MID_SERVO = 0.42;
     final double RED_LOW_SERVO = 0.43; // Done      0.6 max hits camera
 
     // Flywheel speeds
-    final double RED_HIGH_VELOCITY = 340;
+    final double RED_HIGH_VELOCITY = 380;
     final double RED_MID_VELOCITY = 340; // Done
-    final double RED_LOW_VELOCITY = 300; // Done
+    final double RED_LOW_VELOCITY = 280; // Done
 
     // Trajectories
     Trajectory redFirstShootTrajectory;
@@ -40,14 +40,14 @@ public class RedAutonSequences {
     Vector2d redShoot = new Vector2d(-24, 18);
     Vector2d red1Shoot = new Vector2d(-24, 18);
     Vector2d red2Shoot = new Vector2d(-24, 18);
-    Vector2d red3Shoot = new Vector2d(-24, 18);
+    Vector2d red3Shoot = new Vector2d(-24, 20);
     Vector2d redTowardsFirstRing = new Vector2d(-48, 36);
     Vector2d redFirstRing = new Vector2d(-48, 72);
     Vector2d redSecondRing = new Vector2d(-24, 72);
     Vector2d redThirdRing = new Vector2d(42, 72);
     Vector2d redPark1 = new Vector2d(32, 34); // Almost done
-    Vector2d redPark2 = new Vector2d(10, 56); // Done
-    Vector2d redPark3 = new Vector2d(-12, 33);
+    Vector2d redPark2 = new Vector2d(10, 58); // Done
+    Vector2d redPark3 = new Vector2d(-13, 35);
 
 
     public RedAutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
@@ -66,7 +66,7 @@ public class RedAutonSequences {
                 .splineTo(red2Shoot, Math.toRadians(-15))
                 .build();
         redFirstShoot3Trajectory = drive.trajectoryBuilder(redStartPose)
-                .splineTo(red3Shoot, Math.toRadians(20))
+                .splineTo(red3Shoot, Math.toRadians(-18.3))
                 .build();
         redRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
                 .splineTo(redTowardsFirstRing, Math.toRadians(90))
