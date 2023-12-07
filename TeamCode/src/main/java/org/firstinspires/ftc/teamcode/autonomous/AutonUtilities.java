@@ -61,6 +61,7 @@ public class AutonUtilities
     {
         hardware.launcherAimServo.setPosition(position);
     }
+    public void flywheelPower(double power) {hardware.flywheel.setPower(power);}
     public void flywheelVelocity(double velocity)
     {
         hardware.flywheel.setVelocity(velocity);
