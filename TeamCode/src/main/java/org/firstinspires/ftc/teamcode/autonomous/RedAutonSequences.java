@@ -79,7 +79,7 @@ public class RedAutonSequences {
                 .splineTo(redThirdRing, Math.toRadians(0))
                 .build();
         redTripleShootTrajectory = drive.trajectoryBuilder(new Pose2d(redThirdRing, Math.toRadians(0)))
-                .splineTo(redShoot, Math.toRadians(0))
+                .splineTo(redShoot, Math.toRadians(-15))
                 .build();
         redPark1Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
                 .splineTo(redPark1, Math.toRadians(90))
@@ -177,9 +177,9 @@ public class RedAutonSequences {
 
 
         // Aim ring
-        utilities.aimLauncher(RED_HIGH_SERVO);
+        utilities.aimLauncher(RED_LOW_SERVO);
         // Set flywheel power
-        utilities.flywheelVelocity(RED_HIGH_VELOCITY);
+        utilities.flywheelVelocity(RED_LOW_VELOCITY);
 
         drive.followTrajectory(redTripleShootTrajectory);
         // Turn off intake

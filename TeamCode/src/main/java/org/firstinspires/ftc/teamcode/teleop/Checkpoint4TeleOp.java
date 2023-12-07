@@ -50,7 +50,7 @@ public class Checkpoint4TeleOp extends OpMode {
     double flywheelSpeed;
 
     int armPosition;
-    final double ARM_POWER = 1;
+    final double ARM_POWER = 0.5;
 
     // ElapsedTime
     ElapsedTime flywheelTime;
@@ -353,7 +353,7 @@ public class Checkpoint4TeleOp extends OpMode {
     {
         if(gamepad2.right_bumper)
         {
-            armPosition = 125; // Junction
+            armPosition = 110; // Junction
         }
         else if(gamepad2.left_bumper)
         {
