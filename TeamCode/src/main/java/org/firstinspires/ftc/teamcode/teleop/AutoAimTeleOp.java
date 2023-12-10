@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -12,8 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.teleop.Utilities;
 import org.firstinspires.ftc.teamcode.hardware.Hardware;
 
 @TeleOp(name="AutoAim")
@@ -26,40 +26,44 @@ public class AutoAimTeleOp extends OpMode {
     final double MID_SPEED = .5;
     final double SLOW_SPEED = .25;
     final double DPAD_SPEED = .25;
-
     double speedConstant;
+
     boolean fieldOriented;
-    boolean controlOverride;
     boolean intakeOn;
+    boolean intakeReverseOn;
     boolean clawOpen;
 
     final double INTAKE_SPEED = 1;
-    final double ARM_SPEED = 1;
     final double LAUNCHER_AIM_LOW_BOUND = 0;
     final double LAUNCHER_AIM_HIGH_BOUND = 1;
 
     double launcherAimServoPosition;
 
-    final double INTAKE_DEPLOY_MAX_POSITION = 1;
-    final double INTAKE_DEPLOY_MIN_POSITION = 0;
-    double intakeDeployServoPosition;
+    final double INTAKE_DEPLOY1_MAX_POSITION = 0.50; // right up
+    final double INTAKE_DEPLOY1_MIN_POSITION = 0.05; // right down
+    final double INTAKE_DEPLOY2_MAX_POSITION = 0.65; // left down
+    final double INTAKE_DEPLOY2_MIN_POSITION = 0.20; // left up
+    double intakeDeployServoPosition1;
+    double intakeDeployServoPosition2;
 
     final double FLYWHEEL_FAST_CAP = 1;
     final double FLYWHEEL_SLOW_CAP = .4;
     double flywheelSpeed;
-    double flywheelAdjustment = 0;
-    double telescopingHoodAdjustment = 0;
-    double flywheelCalculated;
-    double telescopingHoodCalculated;
 
+    final double ARM_MAX_POWER_DEPLOYED = 0.2;
+    final double ARM_MAX_POWER_RETRACTED = 0.5;
+    final double ARM_MIN_POWER_DEPLOYED = -0.6;
+    final double ARM_MIN_POWER_RETRACTED = -0.4;
 
-    int armPosition;
+    final double kF = 0.4;
+    double armPower;
 
     // ElapsedTime
     ElapsedTime flywheelTime;
     ElapsedTime launcherAimTime;
     ElapsedTime sinceStartTime;
     ElapsedTime intakeTime;
+    ElapsedTime intakeBackTime;
     ElapsedTime intakeDeployTime;
     ElapsedTime clawTime;
 
@@ -68,6 +72,15 @@ public class AutoAimTeleOp extends OpMode {
     double initYaw;
     double adjustedYaw;
 
+    // Auto aim
+    StartingPosition startPose;
+    Pose2d startPosition;
+    int lowGoalPoseX = 72;
+    int lowGoalPoseY = 0;
+    int midGoalPoseX = 72;
+    int midGoalPoseY = 24;
+    int highGoalPoseX = 72;
+    int highGoalPoseY = -24;
     SampleMecanumDrive drive;
 
     @Override
@@ -80,20 +93,61 @@ public class AutoAimTeleOp extends OpMode {
 
         speedConstant = FAST_SPEED;
         fieldOriented = false;
-        controlOverride = false;
         intakeOn = false;
         clawOpen = false;
         launcherAimServoPosition = 0;
-        intakeDeployServoPosition = 0;
         flywheelSpeed = 1.0;
+        hardware.flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Slightly higher maximum velocity
+        hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armPower = 0;
+        drive = new SampleMecanumDrive(hardwareMap);
 
         // Setup field oriented
         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = angles.firstAngle;
 
-        drive = new SampleMecanumDrive(hardwareMap);
-
-        drive.setPoseEstimate(new Pose2d(36, -36, Math.toRadians(-90)));
+        // Calculate starting position
+        boolean startSelected = false;
+        while(!startSelected)
+        {
+            if(gamepad2.triangle)
+            {
+                startPose = StartingPosition.BLUEONE;
+                startPosition = startPose.position;
+                startSelected = true;
+            }
+            else if(gamepad2.circle )
+            {
+                startPose = StartingPosition.BLUETWO;
+                startPosition = startPose.position;
+                startSelected = true;
+            }
+            else if(gamepad2.cross)
+            {
+                startPose = StartingPosition.BLUETHREE;
+                startPosition = startPose.position;
+                startSelected = true;
+            }
+            else if(gamepad2.dpad_up)
+            {
+                startPose = StartingPosition.REDONE;
+                startPosition = startPose.position;
+                startSelected = true;
+            }
+            else if(gamepad2.dpad_left)
+            {
+                startPose = StartingPosition.REDTWO;
+                startPosition = startPose.position;
+                startSelected = true;
+            }
+            else if(gamepad2.dpad_down)
+            {
+                startPose = StartingPosition.REDTHREE;
+                startPosition = startPose.position;
+                startSelected = true;
+            }
+        }
+        drive.setPoseEstimate(startPosition);
 
         telemetry.addData("Status:: ", "Initialized");
         telemetry.update();
@@ -107,17 +161,31 @@ public class AutoAimTeleOp extends OpMode {
         flywheelTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         launcherAimTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         intakeTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        intakeBackTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         intakeDeployTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         clawTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        launcherAimServoPosition = 0.35;
+        intakeDeployServoPosition1 = 0.05; // 0.05 drop 0.45 up
+        intakeDeployServoPosition2 = 0.65; // 0.65 drop 0.25 up
+        intakeReverseOn = false;
     }
 
     @Override
     public void loop() {
-        drive.update();
         drive();
         intake();
         launcher();
         arm();
+        drive.update();
+        telemetry();
+    }
+
+    public void telemetry() {
+        telemetry.addData("Flywheel velocity:: ", hardware.flywheel.getVelocity());
+        telemetry.addData("Launcher servo:: ", hardware.launcherAimServo.getPosition());
+        telemetry.addData("Arm position:: ", hardware.arm.getCurrentPosition());
+        telemetry.addData("Arm power:: ", armPower);
+        telemetry.update();
     }
 
     public void drive() {
@@ -134,9 +202,9 @@ public class AutoAimTeleOp extends OpMode {
         }
 
         // Change field oriented mode
-        if (gamepad1.options) {
+        if (gamepad1.share) {
             fieldOriented = true;
-        } else if (gamepad1.share) {
+        } else if (gamepad1.options) {
             fieldOriented = false;
         }
 
@@ -249,9 +317,10 @@ public class AutoAimTeleOp extends OpMode {
     private void intake()
     {
         // Intake power
-        if(gamepad1.square && intakeTime.time() >= 250)
+        if(gamepad2.square && intakeTime.time() >= 250)
         {
             intakeOn = !intakeOn;
+            intakeReverseOn = false;
             intakeTime.reset();
             if(intakeOn)
             {
@@ -262,50 +331,54 @@ public class AutoAimTeleOp extends OpMode {
                 hardware.intake.setPower(0.0);
             }
         }
-
-        // Intake deployment
-        if(gamepad2.right_stick_y >= 0.1 && intakeDeployTime.time() >= 50)
+        if(gamepad2.cross && intakeBackTime.time() >= 250)
         {
-            intakeDeployTime.reset();
-            if(gamepad2.right_stick_y < 0)
+            intakeOn = false;
+            intakeReverseOn = !intakeReverseOn;
+            if(intakeReverseOn)
             {
-                intakeDeployServoPosition = Math.min(intakeDeployServoPosition + 0.05, INTAKE_DEPLOY_MAX_POSITION);
+                hardware.intake.setPower(-0.5);
             }
             else
             {
-                intakeDeployServoPosition = Math.max(intakeDeployServoPosition - 0.05, INTAKE_DEPLOY_MIN_POSITION);
+                hardware.intake.setPower(0);
+            }
+            intakeBackTime.reset();
+        }
+
+        // Intake deployment
+        if(Math.abs(gamepad2.right_stick_y) >= 0.1 && intakeDeployTime.time() >= 50)
+        {
+            intakeDeployTime.reset();
+            if(gamepad2.right_stick_y > 0)
+            {
+                intakeDeployServoPosition1 = Math.min(intakeDeployServoPosition1 + 0.05, INTAKE_DEPLOY1_MAX_POSITION);
+                intakeDeployServoPosition2 = Math.max(intakeDeployServoPosition2 - 0.05, INTAKE_DEPLOY2_MIN_POSITION);
+            }
+            else
+            {
+                intakeDeployServoPosition1 = Math.max(intakeDeployServoPosition1 - 0.05, INTAKE_DEPLOY1_MIN_POSITION);
+                intakeDeployServoPosition2 = Math.min(intakeDeployServoPosition2 + 0.05, INTAKE_DEPLOY2_MAX_POSITION);
             }
         }
-        hardware.intakeDeployServo1.setPosition(intakeDeployServoPosition);
+        hardware.intakeDeployServo1.setPosition(intakeDeployServoPosition1);
+        hardware.intakeDeployServo2.setPosition(intakeDeployServoPosition2);
     }
 
     private void launcher()
     {
-        // Flywheel speed adjustment
+        // Flywheel speed
         if(gamepad2.dpad_up && flywheelTime.time() >= 250)
         {
-            flywheelAdjustment += 0.05;
+            flywheelSpeed = Math.min(flywheelSpeed + 0.10, FLYWHEEL_FAST_CAP);
             flywheelTime.reset();
         }
         else if(gamepad2.dpad_down && flywheelTime.time() >= 250)
         {
-            flywheelAdjustment -= 0.05;
+            flywheelSpeed = Math.max(flywheelSpeed - 0.10, FLYWHEEL_SLOW_CAP);
             flywheelTime.reset();
         }
-
-        // Telescoping hood position adjustment
-        if(gamepad2.dpad_right && launcherAimTime.time() >= 250)
-        {
-            telescopingHoodAdjustment += 0.05;
-            launcherAimTime.reset();
-        }
-        else if(gamepad2.dpad_left && launcherAimTime.time() >= 250)
-        {
-            telescopingHoodAdjustment -= 0.05;
-            launcherAimTime.reset();
-        }
-
-        // Goal tracking here
+        hardware.flywheel.setPower(gamepad2.left_trigger * flywheelSpeed);
 
         // Shoot
         if(gamepad2.right_trigger > 0.1)
@@ -313,64 +386,91 @@ public class AutoAimTeleOp extends OpMode {
             utilities.shoot();
         }
 
-        flywheelSpeed = flywheelCalculated + flywheelAdjustment;
-        launcherAimServoPosition = telescopingHoodCalculated + telescopingHoodAdjustment;
-
-        // Flywheel
-        if(gamepad2.left_trigger > 0.1)
+        // Telescoping hood position
+        if(gamepad2.dpad_right && launcherAimTime.time() >= 250)
         {
-            hardware.flywheel.setPower(flywheelSpeed);
+            highGoalPoseY += 2;
+            midGoalPoseY += 2;
+            lowGoalPoseY += 2;
+            launcherAimTime.reset();
         }
-
-        // Launcher aim
+        else if(gamepad2.dpad_left && launcherAimTime.time() >= 250)
+        {
+            highGoalPoseY -= 2;
+            midGoalPoseY -= 2;
+            lowGoalPoseY -= 2;
+            launcherAimTime.reset();
+        }
+        launcherAimServoPosition = calculateAimServoPosition();
         hardware.launcherAimServo.setPosition(launcherAimServoPosition);
     }
 
-    public void calculateLauncherAimServoPosition()
-    {
-        // Retrieve your pose
-        Pose2d myPose = drive.getPoseEstimate();
-
-        telemetry.addData("x", myPose.getX());
-        telemetry.addData("y", myPose.getY());
-        telemetry.addData("heading", myPose.getHeading());
-    }
-    public void calculateFlywheelSpeed()
-    {
-    }
-
-
     private void arm()
     {
-        // Prevent accidental arm trigger
-        if(gamepad2.options)
-        {
-            controlOverride = true;
-        }
-        // If endgame or overridden allow arm use
-        if(sinceStartTime.time() > 90000 || controlOverride)
-        {
-            if(Math.abs(gamepad2.left_stick_y) > 0.05) //Setting deadzone for arm breaking
-            {
-                if(!(hardware.arm.getMode() == DcMotor.RunMode.RUN_USING_ENCODER))
-                {
-                    hardware.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }
-                hardware.arm.setPower(-gamepad2.left_stick_y * ARM_SPEED);
-                armPosition = hardware.arm.getCurrentPosition();
-            }
-            else // PID control for arm breaking
-            {
-                hardware.arm.setTargetPosition(armPosition);
-                hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
 
-            // Claw
-            if(gamepad2.triangle && clawTime.time() >= 250)
-            {
-                clawOpen = !clawOpen;
-                utilities.clawControl(clawOpen);
-            }
+        armPower = -gamepad2.left_stick_y + calculateKFMultiplier();
+        if(hardware.arm.getCurrentPosition() < 75)
+        {
+            if(armPower < ARM_MIN_POWER_RETRACTED)
+                armPower = ARM_MIN_POWER_RETRACTED;
+            else if(armPower > ARM_MAX_POWER_RETRACTED)
+                armPower = ARM_MAX_POWER_RETRACTED;
+        }
+        else
+        {
+            if(armPower < ARM_MIN_POWER_DEPLOYED)
+                armPower = ARM_MIN_POWER_DEPLOYED;
+            else if(armPower > ARM_MAX_POWER_DEPLOYED)
+                armPower = ARM_MAX_POWER_DEPLOYED;
+        }
+        hardware.arm.setPower(armPower);
+
+        // Claw
+        if(gamepad2.triangle && clawTime.time() >= 1000)
+        {
+            clawOpen = !clawOpen;
+            utilities.clawControl(clawOpen);
+        }
+    }
+
+    public double calculateKFMultiplier()
+    {
+        // Feedforwards based on force of gravity
+        return Math.cos((hardware.arm.getCurrentPosition() - 5) * Math.PI / 144) * kF;
+    }
+
+    public int calculateAimServoPosition()
+    {
+        // Get location
+        Pose2d myPose = drive.getPoseEstimate();
+        double x = myPose.getX();
+        double y = myPose.getY();
+        double heading = myPose.getHeading();
+
+        // Update x + y to launcher position
+
+        // Calculate angle
+
+        int calculatedPosition = 0;
+
+        return calculatedPosition;
+    }
+
+    public enum StartingPosition
+    {
+        // x, y value
+        BLUEONE(32, -37, -90),
+        BLUETWO(8, -60, -90),
+        BLUETHREE(-14, -36, -90),
+        REDONE(32, 34, 90),
+        REDTWO(10, 58, 90),
+        REDTHREE(-13, 35, 90);
+
+        Pose2d position;
+
+        StartingPosition(int x, int y, int heading)
+        {
+            position = new Pose2d(x, y, Math.toRadians(heading));
         }
     }
 }
