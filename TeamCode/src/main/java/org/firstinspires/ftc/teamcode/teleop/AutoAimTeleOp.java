@@ -145,6 +145,7 @@ public class AutoAimTeleOp extends OpMode {
         drive.setPoseEstimate(startPosition);
 
         telemetry.addData("Status:: ", "Initialized");
+        telemetry.addData("Start Position:: ", startPosition);
         telemetry.update();
     }
 
@@ -180,6 +181,7 @@ public class AutoAimTeleOp extends OpMode {
         telemetry.addData("Launcher servo:: ", hardware.launcherAimServo.getPosition());
         telemetry.addData("Arm position:: ", hardware.arm.getCurrentPosition());
         telemetry.addData("Arm power:: ", armPower);
+        telemetry.addData("Drive Position", drive.getPoseEstimate());
         telemetry.update();
     }
 
