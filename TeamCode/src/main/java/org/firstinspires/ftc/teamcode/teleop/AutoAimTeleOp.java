@@ -74,13 +74,8 @@ public class AutoAimTeleOp extends OpMode {
 
     // Auto aim
     StartingPosition startPose;
+    Goal targetGoal;
     Pose2d startPosition;
-    int lowGoalPoseX = 72;
-    int lowGoalPoseY = 0;
-    int midGoalPoseX = 72;
-    int midGoalPoseY = 24;
-    int highGoalPoseX = 72;
-    int highGoalPoseY = -24;
     SampleMecanumDrive drive;
 
     @Override
@@ -95,11 +90,11 @@ public class AutoAimTeleOp extends OpMode {
         fieldOriented = false;
         intakeOn = false;
         clawOpen = false;
-        launcherAimServoPosition = 0;
         flywheelSpeed = 1.0;
         hardware.flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Slightly higher maximum velocity
         hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armPower = 0;
+        targetGoal = Goal.LOW;
         drive = new SampleMecanumDrive(hardwareMap);
 
         // Setup field oriented
@@ -380,29 +375,41 @@ public class AutoAimTeleOp extends OpMode {
         }
         hardware.flywheel.setPower(gamepad2.left_trigger * flywheelSpeed);
 
-        // Shoot
-        if(gamepad2.right_trigger > 0.1)
+        // Change target goal
+        if(gamepad2.left_bumper)
         {
-            utilities.shoot();
+            targetGoal = targetGoal = Goal.MID;
+        }
+        else if(gamepad2.right_bumper)
+        {
+            targetGoal = targetGoal = Goal.LOW;
         }
 
         // Telescoping hood position
         if(gamepad2.dpad_right && launcherAimTime.time() >= 250)
         {
-            highGoalPoseY += 2;
-            midGoalPoseY += 2;
-            lowGoalPoseY += 2;
+            // Adjust field position
+            Pose2d tempPose = drive.getPoseEstimate();
+            tempPose = new Pose2d(tempPose.getX(), tempPose.getY()+2, tempPose.getHeading());
+            drive.setPoseEstimate(tempPose);
             launcherAimTime.reset();
         }
         else if(gamepad2.dpad_left && launcherAimTime.time() >= 250)
         {
-            highGoalPoseY -= 2;
-            midGoalPoseY -= 2;
-            lowGoalPoseY -= 2;
+            // Adjust field position
+            Pose2d tempPose = drive.getPoseEstimate();
+            tempPose = new Pose2d(tempPose.getX(), tempPose.getY()-2, tempPose.getHeading());
+            drive.setPoseEstimate(tempPose);
             launcherAimTime.reset();
         }
         launcherAimServoPosition = calculateAimServoPosition();
         hardware.launcherAimServo.setPosition(launcherAimServoPosition);
+
+        // Shoot
+        if(gamepad2.right_trigger > 0.1)
+        {
+            utilities.shoot();
+        }
     }
 
     private void arm()
@@ -439,8 +446,10 @@ public class AutoAimTeleOp extends OpMode {
         return Math.cos((hardware.arm.getCurrentPosition() - 5) * Math.PI / 144) * kF;
     }
 
-    public int calculateAimServoPosition()
+    public double calculateAimServoPosition()
     {
+        double targetX = targetGoal.targetX;
+        double targetY = targetGoal.targetY;
         // Get location
         Pose2d myPose = drive.getPoseEstimate();
         double x = myPose.getX();
@@ -448,12 +457,48 @@ public class AutoAimTeleOp extends OpMode {
         double heading = myPose.getHeading();
 
         // Update x + y to launcher position
+        x += 10.1 * Math.cos(heading - Math.toRadians(20));
+        y += 10.1 * Math.sin(heading - Math.toRadians(20));
 
-        // Calculate angle
+        // Calculate angle (degrees)
+        double theta = Math.atan((targetX - x) / (targetY - y));  // delta x / delta y
 
-        int calculatedPosition = 0;
+        // Convert angle to servo position     .35 straight min (0 degree)    .5 max (-20.25 degree)
+        double calculatedPosition;
+        double maxAngle = 0;
+        double maxServo = 0.35;
+        double minAngle = -20.25;
+        double minServo = 0.50;
 
+        if(theta > maxAngle)
+        {
+            calculatedPosition = maxServo;
+        }
+        else if(theta < minAngle)
+        {
+            calculatedPosition = minServo;
+        }
+        else
+        {
+            calculatedPosition = theta / (minAngle-maxAngle) * (minServo-maxServo) + maxServo;
+        }
         return calculatedPosition;
+    }
+
+    public enum Goal
+    {
+        // x, y value
+        LOW(72, 0),
+        MID(72, 24),
+        HIGH(72, -24);
+        double targetX;
+        double targetY;
+
+        Goal(int x, int y)
+        {
+            targetX = x;
+            targetY = y;
+        }
     }
 
     public enum StartingPosition
