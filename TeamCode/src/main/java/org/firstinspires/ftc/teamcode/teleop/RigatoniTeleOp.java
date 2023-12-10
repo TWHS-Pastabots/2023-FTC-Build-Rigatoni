@@ -52,6 +52,9 @@ public class RigatoniTeleOp extends OpMode {
     final double ARM_MIN_POWER_DEPLOYED = -0.6;
     final double ARM_MIN_POWER_RETRACTED = -0.4;
 
+    final double kF = 0.4;
+    double armPower;
+
     // ElapsedTime
     ElapsedTime flywheelTime;
     ElapsedTime launcherAimTime;
@@ -60,13 +63,6 @@ public class RigatoniTeleOp extends OpMode {
     ElapsedTime intakeBackTime;
     ElapsedTime intakeDeployTime;
     ElapsedTime clawTime;
-
-    PIDFCoefficients pidfCoefficients;
-    final double kP = 20;
-    final double kI = 0;
-    final double kD = .1;
-    final double kF = -30;
-    double armPower;
 
     // Field oriented
     Orientation angles = new Orientation();
@@ -114,7 +110,6 @@ public class RigatoniTeleOp extends OpMode {
         intakeDeployServoPosition1 = 0.05; // 0.05 drop 0.45 up
         intakeDeployServoPosition2 = 0.65; // 0.65 drop 0.25 up
         intakeReverseOn = false;
-
     }
 
     @Override
@@ -124,13 +119,12 @@ public class RigatoniTeleOp extends OpMode {
         launcher();
         arm();
         telemetry();
-
     }
 
     public void telemetry() {
         telemetry.addData("Flywheel velocity:: ", hardware.flywheel.getVelocity());
         telemetry.addData("Launcher servo:: ", hardware.launcherAimServo.getPosition());
-        telemetry.addData("Arm position actual:: ", hardware.arm.getCurrentPosition());
+        telemetry.addData("Arm position:: ", hardware.arm.getCurrentPosition());
         telemetry.addData("Arm power:: ", armPower);
         telemetry.update();
     }
@@ -368,7 +362,7 @@ public class RigatoniTeleOp extends OpMode {
         hardware.arm.setPower(armPower);
 
         // Claw
-        if(gamepad2.triangle && clawTime.time() >= 500)
+        if(gamepad2.triangle && clawTime.time() >= 1000)
         {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
