@@ -84,7 +84,6 @@ public class RigatoniTeleOp extends OpMode {
         launcherAimServoPosition = 0;
         flywheelSpeed = 1.0;
         hardware.flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Slightly higher maximum velocity
-        hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armPower = 0;
 
         // Setup field oriented
@@ -345,19 +344,13 @@ public class RigatoniTeleOp extends OpMode {
     {
 
         armPower = -gamepad2.left_stick_y + calculateKFMultiplier();
-        if(hardware.arm.getCurrentPosition() < 75)
+        if(armPower > 1)
         {
-            if(armPower < ARM_MIN_POWER_RETRACTED)
-                armPower = ARM_MIN_POWER_RETRACTED;
-            else if(armPower > ARM_MAX_POWER_RETRACTED)
-                armPower = ARM_MAX_POWER_RETRACTED;
+            armPower = 1;
         }
-        else
+        else if(armPower < -1)
         {
-            if(armPower < ARM_MIN_POWER_DEPLOYED)
-                armPower = ARM_MIN_POWER_DEPLOYED;
-            else if(armPower > ARM_MAX_POWER_DEPLOYED)
-                armPower = ARM_MAX_POWER_DEPLOYED;
+            armPower = -1;
         }
         hardware.arm.setPower(armPower);
 

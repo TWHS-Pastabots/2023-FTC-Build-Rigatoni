@@ -109,6 +109,10 @@ public class Hardware {
 
         // Set zero power behavior and initialize subsystem motors
 
+        arm.setPower(0);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         intake.setPower(0);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
