@@ -78,6 +78,7 @@ public class AutoAimTeleOp extends OpMode {
     Pose2d startPosition;
     SampleMecanumDrive drive;
     boolean autoAim;
+    boolean startSelected;
 
     @Override
     public void init() {
@@ -98,53 +99,11 @@ public class AutoAimTeleOp extends OpMode {
         autoAim = true;
         targetGoal = Goal.LOW;
         drive = new SampleMecanumDrive(hardwareMap);
+        startSelected = false;
 
         // Setup field oriented
         angles = hardware.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         initYaw = angles.firstAngle;
-
-        // Calculate starting position
-        boolean startSelected = false;
-        while(!startSelected)
-        {
-            if(gamepad2.triangle)
-            {
-                startPose = StartingPosition.BLUEONE;
-                startPosition = startPose.position;
-                startSelected = true;
-            }
-            else if(gamepad2.circle )
-            {
-                startPose = StartingPosition.BLUETWO;
-                startPosition = startPose.position;
-                startSelected = true;
-            }
-            else if(gamepad2.cross)
-            {
-                startPose = StartingPosition.BLUETHREE;
-                startPosition = startPose.position;
-                startSelected = true;
-            }
-            else if(gamepad2.dpad_up)
-            {
-                startPose = StartingPosition.REDONE;
-                startPosition = startPose.position;
-                startSelected = true;
-            }
-            else if(gamepad2.dpad_left)
-            {
-                startPose = StartingPosition.REDTWO;
-                startPosition = startPose.position;
-                startSelected = true;
-            }
-            else if(gamepad2.dpad_down)
-            {
-                startPose = StartingPosition.REDTHREE;
-                startPosition = startPose.position;
-                startSelected = true;
-            }
-        }
-        drive.setPoseEstimate(startPosition);
 
         telemetry.addData("Status:: ", "Initialized");
         telemetry.addData("Start Position:: ", startPosition);
@@ -170,12 +129,63 @@ public class AutoAimTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        drive();
-        intake();
-        launcher();
-        arm();
-        drive.update();
-        telemetry();
+        // Calculate starting position
+        if(!startSelected)
+        {
+            if(gamepad2.triangle)
+            {
+                startPose = StartingPosition.BLUEONE;
+                startPosition = startPose.position;
+                drive.setPoseEstimate(startPosition);
+                startSelected = true;
+            }
+            else if(gamepad2.circle )
+            {
+                startPose = StartingPosition.BLUETWO;
+                startPosition = startPose.position;
+                drive.setPoseEstimate(startPosition);
+                startSelected = true;
+            }
+            else if(gamepad2.cross)
+            {
+                startPose = StartingPosition.BLUETHREE;
+                startPosition = startPose.position;
+                drive.setPoseEstimate(startPosition);
+                startSelected = true;
+            }
+            else if(gamepad2.dpad_up)
+            {
+                startPose = StartingPosition.REDONE;
+                startPosition = startPose.position;
+                drive.setPoseEstimate(startPosition);
+                startSelected = true;
+            }
+            else if(gamepad2.dpad_left)
+            {
+                startPose = StartingPosition.REDTWO;
+                startPosition = startPose.position;
+                drive.setPoseEstimate(startPosition);
+                startSelected = true;
+            }
+            else if(gamepad2.dpad_down)
+            {
+                startPose = StartingPosition.REDTHREE;
+                startPosition = startPose.position;
+                drive.setPoseEstimate(startPosition);
+                startSelected = true;
+            }
+            telemetry.addLine("Select a starting position");
+            telemetry.update();
+        }
+        else
+        {
+            drive();
+            intake();
+            launcher();
+            arm();
+            drive.update();
+            telemetry();
+        }
     }
 
     public void telemetry() {
@@ -470,6 +480,7 @@ public class AutoAimTeleOp extends OpMode {
         {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
+            clawTime.reset();
         }
     }
 

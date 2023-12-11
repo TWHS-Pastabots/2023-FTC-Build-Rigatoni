@@ -359,6 +359,7 @@ public class RigatoniTeleOp extends OpMode {
         {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
+            clawTime.reset();
         }
     }
 

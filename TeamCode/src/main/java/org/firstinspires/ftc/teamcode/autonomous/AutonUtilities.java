@@ -75,4 +75,6 @@ public class AutonUtilities
         }
     }
     public void flywheelOff() {hardware.flywheel.setVelocity(0);}
+
+    public void retractTelescopingHood() {hardware.launcherAimServo.setPosition(0);}
 }

@@ -373,6 +373,7 @@ public class Checkpoint4TeleOp extends OpMode {
         {
             clawOpen = !clawOpen;
             utilities.clawControl(clawOpen);
+            clawTime.reset();
         }
     }
 }
