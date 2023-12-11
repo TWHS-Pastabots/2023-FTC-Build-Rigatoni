@@ -26,7 +26,9 @@ public class BlueAutonSequences {
     Trajectory blueFirstShoot1Trajectory;
     Trajectory blueFirstShoot2Trajectory;
     Trajectory blueFirstShoot3Trajectory;
-    Trajectory blueRing1PickupTrajectory;
+    Trajectory blue1Ring1PickupTrajectory;
+    Trajectory blue2Ring1PickupTrajectory;
+    Trajectory blue3Ring1PickupTrajectory;
     Trajectory blueRing2PickupTrajectory;
     Trajectory blueRing3PickupTrajectory;
     Trajectory blueTripleShootTrajectory;
@@ -39,7 +41,6 @@ public class BlueAutonSequences {
 
     // Pose + Vector2d
     Pose2d blueStartPose = new Pose2d(-64, -48, Math.toRadians(0));
-    Vector2d blueShoot = new Vector2d(-24, -18);
     Vector2d blue1Shoot = new Vector2d(-24, -18);
     Vector2d blue2Shoot = new Vector2d(-24, -18);
     Vector2d blue3Shoot = new Vector2d(-24, -18);
@@ -66,7 +67,15 @@ public class BlueAutonSequences {
         blueFirstShoot3Trajectory = drive.trajectoryBuilder(blueStartPose)
                 .splineTo(blue3Shoot, Math.toRadians(-7))
                 .build();
-        blueRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(15)))
+        blue1Ring1PickupTrajectory = drive.trajectoryBuilder(blueFirstShoot1Trajectory.end())
+                .splineTo(blueTowardsFirstRing, Math.toRadians(-90))
+                .splineTo(blueFirstRing, Math.toRadians(-90))
+                .build();
+        blue2Ring1PickupTrajectory = drive.trajectoryBuilder(blueFirstShoot2Trajectory.end())
+                .splineTo(blueTowardsFirstRing, Math.toRadians(-90))
+                .splineTo(blueFirstRing, Math.toRadians(-90))
+                .build();
+        blue3Ring1PickupTrajectory = drive.trajectoryBuilder(blueFirstShoot3Trajectory.end())
                 .splineTo(blueTowardsFirstRing, Math.toRadians(-90))
                 .splineTo(blueFirstRing, Math.toRadians(-90))
                 .build();
@@ -79,13 +88,13 @@ public class BlueAutonSequences {
         blueTripleShootTrajectory = drive.trajectoryBuilder(new Pose2d(blueThirdRing, Math.toRadians(0)))
                 .splineTo(blue2Shoot, Math.toRadians(0))
                 .build();
-        bluePark1Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(15)))
+        bluePark1Trajectory = drive.trajectoryBuilder(new Pose2d(blue1Shoot, Math.toRadians(15)))
                 .splineTo(bluePark1, Math.toRadians(-90))
                 .build();
-        bluePark2Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
+        bluePark2Trajectory = drive.trajectoryBuilder(new Pose2d(blue2Shoot, Math.toRadians(0)))
                 .splineTo(bluePark2, Math.toRadians(-90))
                 .build();
-        bluePark3Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
+        bluePark3Trajectory = drive.trajectoryBuilder(new Pose2d(blue3Shoot, Math.toRadians(0)))
                 .splineTo(bluePark3, Math.toRadians(-90))
                 .build();
         blueIntakePark1Trajectory = drive.trajectoryBuilder(new Pose2d(blue2Shoot, Math.toRadians(0)))
@@ -117,6 +126,8 @@ public class BlueAutonSequences {
         utilities.flywheelOff();
 
         // Pick up and shoot other rings
+        utilities.intake(true);
+        drive.followTrajectory(blue1Ring1PickupTrajectory);
         blueIntake();
 
         // Park
@@ -144,6 +155,8 @@ public class BlueAutonSequences {
         utilities.flywheelOff();
 
         // Pick up and shoot other rings
+        utilities.intake(true);
+        drive.followTrajectory(blueRing2PickupTrajectory);
         blueIntake();
 
         // Park
@@ -169,6 +182,8 @@ public class BlueAutonSequences {
         utilities.flywheelOff();
 
         // Pick up and shoot other rings
+        utilities.intake(true);
+        drive.followTrajectory(blue3Ring1PickupTrajectory);
         blueIntake();
 
         // Park
@@ -179,8 +194,6 @@ public class BlueAutonSequences {
     public void blueIntake()
     {
         // Pick up three rings
-        utilities.intake(true);
-        drive.followTrajectory(blueRing1PickupTrajectory);
 //        utilities.wait(500);
         drive.followTrajectory(blueRing2PickupTrajectory);
 //        utilities.wait(500);
