@@ -45,7 +45,7 @@ public class RedAutonSequences {
     Vector2d redThirdRing = new Vector2d(42, 72);
     Vector2d redPark1 = new Vector2d(32, 34); // Almost done
     Vector2d redPark2 = new Vector2d(10, 58); // Done
-    Vector2d redPark3 = new Vector2d(-13, 33);
+    Vector2d redPark3 = new Vector2d(-13, 35);
 
 
     public RedAutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
