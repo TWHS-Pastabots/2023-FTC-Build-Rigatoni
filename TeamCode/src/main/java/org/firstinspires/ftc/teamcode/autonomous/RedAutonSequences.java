@@ -23,7 +23,6 @@ public class RedAutonSequences {
     final double RED_LOW_VELOCITY = 280; // Done
 
     // Trajectories
-    Trajectory redFirstShootTrajectory;
     Trajectory redFirstShoot1Trajectory;
     Trajectory redFirstShoot2Trajectory;
     Trajectory redFirstShoot3Trajectory;
@@ -37,7 +36,6 @@ public class RedAutonSequences {
 
     // Red Pose + Vector2d
     Pose2d redStartPose = new Pose2d(-64, 48, Math.toRadians(0));
-    Vector2d redShoot = new Vector2d(-24, 18);
     Vector2d red1Shoot = new Vector2d(-24, 18);
     Vector2d red2Shoot = new Vector2d(-24, 18);
     Vector2d red3Shoot = new Vector2d(-24, 20);
@@ -47,7 +45,7 @@ public class RedAutonSequences {
     Vector2d redThirdRing = new Vector2d(42, 72);
     Vector2d redPark1 = new Vector2d(32, 34); // Almost done
     Vector2d redPark2 = new Vector2d(10, 58); // Done
-    Vector2d redPark3 = new Vector2d(-13, 35);
+    Vector2d redPark3 = new Vector2d(-13, 33);
 
 
     public RedAutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
@@ -56,9 +54,6 @@ public class RedAutonSequences {
         drive = new SampleMecanumDrive(hardwareMap);
 
         // Trajectories
-        redFirstShootTrajectory = drive.trajectoryBuilder(redStartPose)
-                .splineTo(redShoot, Math.toRadians(0))
-                .build();
         redFirstShoot1Trajectory = drive.trajectoryBuilder(redStartPose)
                 .splineTo(red1Shoot, Math.toRadians(0))
                 .build();
@@ -68,7 +63,7 @@ public class RedAutonSequences {
         redFirstShoot3Trajectory = drive.trajectoryBuilder(redStartPose)
                 .splineTo(red3Shoot, Math.toRadians(-18.3))
                 .build();
-        redRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
+        redRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(red1Shoot, Math.toRadians(0)))
                 .splineTo(redTowardsFirstRing, Math.toRadians(90))
                 .splineTo(redFirstRing, Math.toRadians(90))
                 .build();
@@ -79,15 +74,15 @@ public class RedAutonSequences {
                 .splineTo(redThirdRing, Math.toRadians(0))
                 .build();
         redTripleShootTrajectory = drive.trajectoryBuilder(new Pose2d(redThirdRing, Math.toRadians(0)))
-                .splineTo(redShoot, Math.toRadians(-15))
+                .splineTo(red1Shoot, Math.toRadians(-15))
                 .build();
-        redPark1Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(0)))
+        redPark1Trajectory = drive.trajectoryBuilder(new Pose2d(red1Shoot, Math.toRadians(0)))
                 .splineTo(redPark1, Math.toRadians(90))
                 .build();
-        redPark2Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(-15)))
+        redPark2Trajectory = drive.trajectoryBuilder(new Pose2d(red2Shoot, Math.toRadians(-15)))
                 .splineTo(redPark2, Math.toRadians(90))
                 .build();
-        redPark3Trajectory = drive.trajectoryBuilder(new Pose2d(redShoot, Math.toRadians(20)))
+        redPark3Trajectory = drive.trajectoryBuilder(new Pose2d(red3Shoot, Math.toRadians(20)))
                 .splineTo(redPark3, Math.toRadians(90))
                 .build();
     }
