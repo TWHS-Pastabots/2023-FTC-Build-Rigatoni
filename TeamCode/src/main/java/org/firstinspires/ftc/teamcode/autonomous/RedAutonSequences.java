@@ -134,6 +134,7 @@ public class RedAutonSequences {
         // Park
         drive.followTrajectory(redPark1Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
     public void redTwoFull()
     {
@@ -160,6 +161,7 @@ public class RedAutonSequences {
         // Park
         drive.followTrajectory(redPark2Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
     public void redThreeFull()
     {
@@ -186,6 +188,7 @@ public class RedAutonSequences {
         // Park
         drive.followTrajectory(redPark3Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
 
     public void redIntake()
@@ -235,6 +238,7 @@ public class RedAutonSequences {
         // Park
         drive.followTrajectory(redPark1Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
     public void redTwoPart()
     {
@@ -256,6 +260,7 @@ public class RedAutonSequences {
         // Park
         drive.followTrajectory(redPark2Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
     public void redThreePart()
     {
@@ -277,5 +282,6 @@ public class RedAutonSequences {
         // Park
         drive.followTrajectory(redPark3Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
 }

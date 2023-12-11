@@ -14,8 +14,8 @@ public class BlueAutonSequences {
 
     // Servo Positions (0.35 straight)
     final double BLUE_HIGH_SERVO = 0.40;
-    final double BLUE_MID_SERVO = 0.42; // Done
-    final double BLUE_LOW_SERVO = 0.36; // Done
+    final double BLUE_MID_SERVO = 0.42;
+    final double BLUE_LOW_SERVO = 0.36;
 
     // Flywheel speeds
     final double BLUE_HIGH_VELOCITY = 350;
@@ -48,8 +48,8 @@ public class BlueAutonSequences {
     Vector2d blueFirstRing = new Vector2d(-48, -72);
     Vector2d blueSecondRing = new Vector2d(-24, -72);
     Vector2d blueThirdRing = new Vector2d(42, -72);
-    Vector2d bluePark1 = new Vector2d(32, -37); // Done
-    Vector2d bluePark2 = new Vector2d(8, -60); // Done
+    Vector2d bluePark1 = new Vector2d(32, -37);
+    Vector2d bluePark2 = new Vector2d(8, -60);
     Vector2d bluePark3 = new Vector2d(-14, -36);
 
     public BlueAutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
@@ -133,6 +133,7 @@ public class BlueAutonSequences {
         // Park
         drive.followTrajectory(blueIntakePark1Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
 
     public void blueTwoFull()
@@ -162,6 +163,7 @@ public class BlueAutonSequences {
         // Park
         drive.followTrajectory(blueIntakePark2Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
 
     public void blueThreeFull()
@@ -189,6 +191,7 @@ public class BlueAutonSequences {
         // Park
         drive.followTrajectory(blueIntakePark3Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
 
     public void blueIntake()
@@ -239,6 +242,7 @@ public class BlueAutonSequences {
         // Park
         drive.followTrajectory(bluePark1Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
     public void blueTwoPart()
     {
@@ -260,6 +264,7 @@ public class BlueAutonSequences {
         // Park
         drive.followTrajectory(bluePark2Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
     public void blueThreePart()
     {
@@ -281,5 +286,6 @@ public class BlueAutonSequences {
         // Park
         drive.followTrajectory(bluePark3Trajectory);
         utilities.retractIntake();
+        utilities.retractTelescopingHood();
     }
 }
