@@ -23,7 +23,6 @@ public class BlueAutonSequences {
     final double BLUE_LOW_VELOCITY = 340;
 
     // Trajectories
-    Trajectory blueFirstShootTrajectory;
     Trajectory blueFirstShoot1Trajectory;
     Trajectory blueFirstShoot2Trajectory;
     Trajectory blueFirstShoot3Trajectory;
@@ -34,6 +33,9 @@ public class BlueAutonSequences {
     Trajectory bluePark1Trajectory;
     Trajectory bluePark2Trajectory;
     Trajectory bluePark3Trajectory;
+    Trajectory blueIntakePark1Trajectory;
+    Trajectory blueIntakePark2Trajectory;
+    Trajectory blueIntakePark3Trajectory;
 
     // Pose + Vector2d
     Pose2d blueStartPose = new Pose2d(-64, -48, Math.toRadians(0));
@@ -55,9 +57,6 @@ public class BlueAutonSequences {
         drive = new SampleMecanumDrive(hardwareMap);
 
         // Trajectories
-        blueFirstShootTrajectory = drive.trajectoryBuilder(blueStartPose)
-                .splineTo(blueShoot, Math.toRadians(0))
-                .build();
         blueFirstShoot1Trajectory = drive.trajectoryBuilder(blueStartPose)
                 .splineTo(blue1Shoot, Math.toRadians(20))
                 .build();
@@ -78,7 +77,7 @@ public class BlueAutonSequences {
                 .splineTo(blueThirdRing, Math.toRadians(0))
                 .build();
         blueTripleShootTrajectory = drive.trajectoryBuilder(new Pose2d(blueThirdRing, Math.toRadians(0)))
-                .splineTo(blueShoot, Math.toRadians(0))
+                .splineTo(blue2Shoot, Math.toRadians(0))
                 .build();
         bluePark1Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(15)))
                 .splineTo(bluePark1, Math.toRadians(-90))
@@ -87,6 +86,15 @@ public class BlueAutonSequences {
                 .splineTo(bluePark2, Math.toRadians(-90))
                 .build();
         bluePark3Trajectory = drive.trajectoryBuilder(new Pose2d(blueShoot, Math.toRadians(0)))
+                .splineTo(bluePark3, Math.toRadians(-90))
+                .build();
+        blueIntakePark1Trajectory = drive.trajectoryBuilder(new Pose2d(blue2Shoot, Math.toRadians(0)))
+                .splineTo(bluePark1, Math.toRadians(-90))
+                .build();
+        blueIntakePark2Trajectory = drive.trajectoryBuilder(new Pose2d(blue2Shoot, Math.toRadians(0)))
+                .splineTo(bluePark2, Math.toRadians(-90))
+                .build();
+        blueIntakePark3Trajectory = drive.trajectoryBuilder(new Pose2d(blue2Shoot, Math.toRadians(0)))
                 .splineTo(bluePark3, Math.toRadians(-90))
                 .build();
     }
@@ -101,7 +109,7 @@ public class BlueAutonSequences {
         utilities.flywheelVelocity(BLUE_MID_VELOCITY);
 
         // Trajectory to shooting position
-        drive.followTrajectory(blueFirstShootTrajectory);
+        drive.followTrajectory(blueFirstShoot1Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -112,7 +120,7 @@ public class BlueAutonSequences {
         blueIntake();
 
         // Park
-        drive.followTrajectory(bluePark1Trajectory);
+        drive.followTrajectory(blueIntakePark1Trajectory);
         utilities.retractIntake();
     }
 
@@ -127,7 +135,7 @@ public class BlueAutonSequences {
         utilities.flywheelVelocity(BLUE_LOW_VELOCITY);
 
         // Trajectory to shooting position
-        drive.followTrajectory(blueFirstShootTrajectory);
+        drive.followTrajectory(blueFirstShoot2Trajectory);
 
 
         // Shoot first ring
@@ -139,7 +147,7 @@ public class BlueAutonSequences {
         blueIntake();
 
         // Park
-        drive.followTrajectory(bluePark2Trajectory);
+        drive.followTrajectory(blueIntakePark2Trajectory);
         utilities.retractIntake();
     }
 
@@ -153,7 +161,7 @@ public class BlueAutonSequences {
         utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
 
         // Trajectory to shooting position
-        drive.followTrajectory(blueFirstShootTrajectory);
+        drive.followTrajectory(blueFirstShoot3Trajectory);
 
         // Shoot first ring
         utilities.shoot();
@@ -164,7 +172,7 @@ public class BlueAutonSequences {
         blueIntake();
 
         // Park
-        drive.followTrajectory(bluePark3Trajectory);
+        drive.followTrajectory(blueIntakePark3Trajectory);
         utilities.retractIntake();
     }
 
