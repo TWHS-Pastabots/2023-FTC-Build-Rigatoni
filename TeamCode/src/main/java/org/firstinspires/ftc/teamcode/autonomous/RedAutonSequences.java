@@ -14,13 +14,13 @@ public class RedAutonSequences {
 
     // Servo Positions (0.35 straight)
     final double RED_HIGH_SERVO = 0.45;
-    final double RED_MID_SERVO = 0.42;
-    final double RED_LOW_SERVO = 0.43; // Done      0.6 max hits camera
+    final double RED_MID_SERVO = 0.42; // Done
+    final double RED_LOW_SERVO = 0.415;
 
     // Flywheel speeds
     final double RED_HIGH_VELOCITY = 380;
     final double RED_MID_VELOCITY = 340; // Done
-    final double RED_LOW_VELOCITY = 280; // Done
+    final double RED_LOW_VELOCITY = 300;
 
     // Trajectories
     Trajectory redFirstShoot1Trajectory;
@@ -42,14 +42,14 @@ public class RedAutonSequences {
     // Red Pose + Vector2d
     Pose2d redStartPose = new Pose2d(-64, 48, Math.toRadians(0));
     Vector2d red1Shoot = new Vector2d(-24, 18);
-    Vector2d red2Shoot = new Vector2d(-24, 18);
+    Vector2d red2Shoot = new Vector2d(-20, 18);
     Vector2d red3Shoot = new Vector2d(-24, 20);
     Vector2d redTowardsFirstRing = new Vector2d(-48, 36);
     Vector2d redFirstRing = new Vector2d(-48, 72);
     Vector2d redSecondRing = new Vector2d(-24, 72);
     Vector2d redThirdRing = new Vector2d(42, 72);
-    Vector2d redPark1 = new Vector2d(32, 34); // Almost done
-    Vector2d redPark2 = new Vector2d(10, 58); // Done
+    Vector2d redPark1 = new Vector2d(32, 34); // Done
+    Vector2d redPark2 = new Vector2d(10, 57);
     Vector2d redPark3 = new Vector2d(-13, 35);
 
 
@@ -66,7 +66,7 @@ public class RedAutonSequences {
                 .splineTo(red2Shoot, Math.toRadians(-15))
                 .build();
         redFirstShoot3Trajectory = drive.trajectoryBuilder(redStartPose)
-                .splineTo(red3Shoot, Math.toRadians(-18.3))
+                .splineTo(red3Shoot, Math.toRadians(-21))
                 .build();
         red1Ring1PickupTrajectory = drive.trajectoryBuilder(redFirstShoot1Trajectory.end())
                 .splineTo(redTowardsFirstRing, Math.toRadians(90))
@@ -229,7 +229,7 @@ public class RedAutonSequences {
 
         // Shoot first ring
         utilities.shoot();
-        utilities.wait(1000);
+        utilities.wait(3000);
         utilities.flywheelOff();
 
         // Park
@@ -250,7 +250,7 @@ public class RedAutonSequences {
 
         // Shoot first ring
         utilities.shoot();
-        utilities.wait(1000);
+        utilities.wait(3000);
         utilities.flywheelOff();
 
         // Park
@@ -271,7 +271,7 @@ public class RedAutonSequences {
 
         // Shoot first ring
         utilities.shoot();
-        utilities.wait(1000);
+        utilities.wait(3000);
         utilities.flywheelOff();
 
         // Park
