@@ -77,6 +77,7 @@ public class AutoAimTeleOp extends OpMode {
     Goal targetGoal;
     Pose2d startPosition;
     SampleMecanumDrive drive;
+    boolean autoAim;
 
     @Override
     public void init() {
@@ -94,6 +95,7 @@ public class AutoAimTeleOp extends OpMode {
         hardware.flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Slightly higher maximum velocity
         hardware.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armPower = 0;
+        autoAim = true;
         targetGoal = Goal.LOW;
         drive = new SampleMecanumDrive(hardwareMap);
 
@@ -377,34 +379,63 @@ public class AutoAimTeleOp extends OpMode {
         }
         hardware.flywheel.setPower(gamepad2.left_trigger * flywheelSpeed);
 
-        // Change target goal
-        if(gamepad2.left_bumper)
+        // Turn on/off auto aim
+        if(gamepad2.options)
         {
-            targetGoal = targetGoal = Goal.MID;
+            autoAim = true;
         }
-        else if(gamepad2.right_bumper)
+        else if(gamepad2.share)
         {
-            targetGoal = targetGoal = Goal.LOW;
+            autoAim = false;
         }
 
-        // Telescoping hood position
-        if(gamepad2.dpad_right && launcherAimTime.time() >= 250)
+        if(autoAim)
         {
-            // Adjust field position
-            Pose2d tempPose = drive.getPoseEstimate();
-            tempPose = new Pose2d(tempPose.getX(), tempPose.getY()+2, tempPose.getHeading());
-            drive.setPoseEstimate(tempPose);
-            launcherAimTime.reset();
+            // Change target goal
+            if(gamepad2.left_bumper)
+            {
+                targetGoal = targetGoal = Goal.MID;
+            }
+            else if(gamepad2.right_bumper)
+            {
+                targetGoal = targetGoal = Goal.LOW;
+            }
+
+            // Telescoping hood position
+            if(gamepad2.dpad_right && launcherAimTime.time() >= 250)
+            {
+                // Adjust field position
+                Pose2d tempPose = drive.getPoseEstimate();
+                tempPose = new Pose2d(tempPose.getX(), tempPose.getY()+2, tempPose.getHeading());
+                drive.setPoseEstimate(tempPose);
+                launcherAimTime.reset();
+            }
+            else if(gamepad2.dpad_left && launcherAimTime.time() >= 250)
+            {
+                // Adjust field position
+                Pose2d tempPose = drive.getPoseEstimate();
+                tempPose = new Pose2d(tempPose.getX(), tempPose.getY()-2, tempPose.getHeading());
+                drive.setPoseEstimate(tempPose);
+                launcherAimTime.reset();
+            }
+            launcherAimServoPosition = calculateAimServoPosition();
         }
-        else if(gamepad2.dpad_left && launcherAimTime.time() >= 250)
+        else
         {
-            // Adjust field position
-            Pose2d tempPose = drive.getPoseEstimate();
-            tempPose = new Pose2d(tempPose.getX(), tempPose.getY()-2, tempPose.getHeading());
-            drive.setPoseEstimate(tempPose);
-            launcherAimTime.reset();
+            // Telescoping hood position
+            if(gamepad2.dpad_right && launcherAimTime.time() >= 50)
+            {
+                launcherAimServoPosition = Math.min(launcherAimServoPosition + 0.025, LAUNCHER_AIM_HIGH_BOUND);
+                launcherAimTime.reset();
+            }
+            else if(gamepad2.dpad_left && launcherAimTime.time() >= 50)
+            {
+                launcherAimServoPosition = Math.max(launcherAimServoPosition - 0.025, LAUNCHER_AIM_LOW_BOUND);
+                launcherAimTime.reset();
+            }
         }
-        launcherAimServoPosition = calculateAimServoPosition();
+
+
         hardware.launcherAimServo.setPosition(launcherAimServoPosition);
 
         // Shoot
