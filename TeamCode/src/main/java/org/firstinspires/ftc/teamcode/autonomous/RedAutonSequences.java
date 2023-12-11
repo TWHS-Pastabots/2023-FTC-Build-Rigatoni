@@ -26,13 +26,18 @@ public class RedAutonSequences {
     Trajectory redFirstShoot1Trajectory;
     Trajectory redFirstShoot2Trajectory;
     Trajectory redFirstShoot3Trajectory;
-    Trajectory redRing1PickupTrajectory;
+    Trajectory red1Ring1PickupTrajectory;
+    Trajectory red2Ring1PickupTrajectory;
+    Trajectory red3Ring1PickupTrajectory;
     Trajectory redRing2PickupTrajectory;
     Trajectory redRing3PickupTrajectory;
     Trajectory redTripleShootTrajectory;
     Trajectory redPark1Trajectory;
     Trajectory redPark2Trajectory;
     Trajectory redPark3Trajectory;
+    Trajectory redIntakePark1Trajectory;
+    Trajectory redIntakePark2Trajectory;
+    Trajectory redIntakePark3Trajectory;
 
     // Red Pose + Vector2d
     Pose2d redStartPose = new Pose2d(-64, 48, Math.toRadians(0));
@@ -63,7 +68,15 @@ public class RedAutonSequences {
         redFirstShoot3Trajectory = drive.trajectoryBuilder(redStartPose)
                 .splineTo(red3Shoot, Math.toRadians(-18.3))
                 .build();
-        redRing1PickupTrajectory = drive.trajectoryBuilder(new Pose2d(red1Shoot, Math.toRadians(0)))
+        red1Ring1PickupTrajectory = drive.trajectoryBuilder(redFirstShoot1Trajectory.end())
+                .splineTo(redTowardsFirstRing, Math.toRadians(90))
+                .splineTo(redFirstRing, Math.toRadians(90))
+                .build();
+        red2Ring1PickupTrajectory = drive.trajectoryBuilder(redFirstShoot2Trajectory.end())
+                .splineTo(redTowardsFirstRing, Math.toRadians(90))
+                .splineTo(redFirstRing, Math.toRadians(90))
+                .build();
+        red3Ring1PickupTrajectory = drive.trajectoryBuilder(redFirstShoot3Trajectory.end())
                 .splineTo(redTowardsFirstRing, Math.toRadians(90))
                 .splineTo(redFirstRing, Math.toRadians(90))
                 .build();
@@ -76,13 +89,22 @@ public class RedAutonSequences {
         redTripleShootTrajectory = drive.trajectoryBuilder(new Pose2d(redThirdRing, Math.toRadians(0)))
                 .splineTo(red1Shoot, Math.toRadians(-15))
                 .build();
-        redPark1Trajectory = drive.trajectoryBuilder(new Pose2d(red1Shoot, Math.toRadians(0)))
+        redPark1Trajectory = drive.trajectoryBuilder(redFirstShoot1Trajectory.end())
                 .splineTo(redPark1, Math.toRadians(90))
                 .build();
-        redPark2Trajectory = drive.trajectoryBuilder(new Pose2d(red2Shoot, Math.toRadians(-15)))
+        redPark2Trajectory = drive.trajectoryBuilder(redFirstShoot2Trajectory.end())
                 .splineTo(redPark2, Math.toRadians(90))
                 .build();
-        redPark3Trajectory = drive.trajectoryBuilder(new Pose2d(red3Shoot, Math.toRadians(20)))
+        redPark3Trajectory = drive.trajectoryBuilder(redFirstShoot3Trajectory.end())
+                .splineTo(redPark3, Math.toRadians(90))
+                .build();
+        redIntakePark1Trajectory = drive.trajectoryBuilder(redFirstShoot1Trajectory.end())
+                .splineTo(redPark1, Math.toRadians(90))
+                .build();
+        redIntakePark2Trajectory = drive.trajectoryBuilder(redFirstShoot2Trajectory.end())
+                .splineTo(redPark2, Math.toRadians(90))
+                .build();
+        redIntakePark3Trajectory = drive.trajectoryBuilder(redFirstShoot3Trajectory.end())
                 .splineTo(redPark3, Math.toRadians(90))
                 .build();
     }
@@ -105,6 +127,8 @@ public class RedAutonSequences {
         utilities.flywheelOff();
 
         // Pick up and shoot other rings
+        utilities.intake(true);
+        drive.followTrajectory(red1Ring1PickupTrajectory);
         redIntake();
 
         // Park
@@ -129,6 +153,8 @@ public class RedAutonSequences {
         utilities.flywheelOff();
 
         // Pick up and shoot other rings
+        utilities.intake(true);
+        drive.followTrajectory(redRing2PickupTrajectory);
         redIntake();
 
         // Park
@@ -153,6 +179,8 @@ public class RedAutonSequences {
         utilities.flywheelOff();
 
         // Pick up and shoot other rings
+        utilities.intake(true);
+        drive.followTrajectory(red3Ring1PickupTrajectory);
         redIntake();
 
         // Park
@@ -163,8 +191,6 @@ public class RedAutonSequences {
     public void redIntake()
     {
         // Pick up three rings
-        utilities.intake(true);
-        drive.followTrajectory(redRing1PickupTrajectory);
 //        utilities.wait(1000);
         drive.followTrajectory(redRing2PickupTrajectory);
 //        utilities.wait(1000);
