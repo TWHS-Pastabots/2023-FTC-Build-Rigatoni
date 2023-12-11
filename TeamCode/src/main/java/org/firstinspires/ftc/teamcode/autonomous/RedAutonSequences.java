@@ -198,9 +198,9 @@ public class RedAutonSequences {
 
 
         // Aim ring
-        utilities.aimLauncher(RED_LOW_SERVO);
+        utilities.aimLauncher(RED_MID_SERVO);
         // Set flywheel power
-        utilities.flywheelVelocity(RED_LOW_VELOCITY);
+        utilities.flywheelVelocity(RED_MID_VELOCITY);
 
         drive.followTrajectory(redTripleShootTrajectory);
         // Turn off intake
