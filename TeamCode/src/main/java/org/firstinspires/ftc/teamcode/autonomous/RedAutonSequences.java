@@ -232,7 +232,7 @@ public class RedAutonSequences {
 
         // Shoot first ring
         utilities.shoot();
-        utilities.wait(3000);
+        utilities.wait(1000);
         utilities.flywheelOff();
 
         // Park
@@ -254,7 +254,7 @@ public class RedAutonSequences {
 
         // Shoot first ring
         utilities.shoot();
-        utilities.wait(3000);
+        utilities.wait(1000);
         utilities.flywheelOff();
 
         // Park
@@ -276,7 +276,7 @@ public class RedAutonSequences {
 
         // Shoot first ring
         utilities.shoot();
-        utilities.wait(3000);
+        utilities.wait(1000);
         utilities.flywheelOff();
 
         // Park
