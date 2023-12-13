@@ -13,14 +13,15 @@ public class RedAutonSequences {
     AutonUtilities utilities;
 
     // Servo Positions (0.35 straight)
-    final double RED_HIGH_SERVO = 0.45;
-    final double RED_MID_SERVO = 0.42; // Done
-    final double RED_LOW_SERVO = 0.415;
+    final double RED_HIGH_SERVO = 0.46;
+    final double RED_MID_SERVO = 0.423; // Done
+    final double RED_LOW_SERVO = 0.435;
 
     // Flywheel speeds
     final double RED_HIGH_VELOCITY = 380;
-    final double RED_MID_VELOCITY = 340; // Done
-    final double RED_LOW_VELOCITY = 300;
+    final double RED_MID_VELOCITY = 320; // Done
+    final double RED_LOW_VELOCITY = 240;
+    final double RED_HIGH_POWER = 1;
 
     // Trajectories
     Trajectory redFirstShoot1Trajectory;
@@ -48,9 +49,9 @@ public class RedAutonSequences {
     Vector2d redFirstRing = new Vector2d(-48, 72);
     Vector2d redSecondRing = new Vector2d(-24, 72);
     Vector2d redThirdRing = new Vector2d(42, 72);
-    Vector2d redPark1 = new Vector2d(32, 34); // Done
-    Vector2d redPark2 = new Vector2d(10, 57);
-    Vector2d redPark3 = new Vector2d(-13, 35);
+    Vector2d redPark1 = new Vector2d(32, 36); // Done
+    Vector2d redPark2 = new Vector2d(10, 58);
+    Vector2d redPark3 = new Vector2d(-13, 35.5);
 
 
     public RedAutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
@@ -269,8 +270,8 @@ public class RedAutonSequences {
         // Aim first ring
         utilities.aimLauncher(RED_HIGH_SERVO);
         // Set flywheel power
-        utilities.flywheelVelocity(RED_HIGH_VELOCITY);
-
+//        utilities.flywheelVelocity(RED_HIGH_VELOCITY);
+        utilities.flywheelPower(RED_HIGH_POWER);
         // Trajectory to shooting position
         drive.followTrajectory(redFirstShoot3Trajectory);
 

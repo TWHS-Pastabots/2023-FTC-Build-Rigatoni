@@ -13,14 +13,17 @@ public class BlueAutonSequences {
     AutonUtilities utilities;
 
     // Servo Positions (0.35 straight)
-    final double BLUE_HIGH_SERVO = 0.40;
+    final double BLUE_HIGH_SERVO = 0.46;
     final double BLUE_MID_SERVO = 0.42;
-    final double BLUE_LOW_SERVO = 0.36;
+    final double BLUE_LOW_SERVO = 0.40;
 
     // Flywheel speeds
     final double BLUE_HIGH_VELOCITY = 350;
     final double BLUE_MID_VELOCITY = 310;
-    final double BLUE_LOW_VELOCITY = 340;
+    final double BLUE_LOW_VELOCITY = 290;
+    final double BLUE_HIGH_POWER = 1;
+    final double BLUE_MID_POWER = .8;
+    final double BLUE_LOW_POWER = .5;
 
     // Trajectories
     Trajectory blueFirstShoot1Trajectory;
@@ -48,9 +51,9 @@ public class BlueAutonSequences {
     Vector2d blueFirstRing = new Vector2d(-48, -72);
     Vector2d blueSecondRing = new Vector2d(-24, -72);
     Vector2d blueThirdRing = new Vector2d(42, -72);
-    Vector2d bluePark1 = new Vector2d(32, -37);
-    Vector2d bluePark2 = new Vector2d(8, -60);
-    Vector2d bluePark3 = new Vector2d(-14, -36);
+    Vector2d bluePark1 = new Vector2d(32, -36.5);
+    Vector2d bluePark2 = new Vector2d(9, -58.5);
+    Vector2d bluePark3 = new Vector2d(-13, -37);
 
     public BlueAutonSequences(HardwareMap hardwareMap, AutonUtilities utilities)
     {
@@ -231,6 +234,7 @@ public class BlueAutonSequences {
         // Set flywheel power
         utilities.flywheelVelocity(BLUE_MID_VELOCITY);
 
+
         // Trajectory to shooting position
         drive.followTrajectory(blueFirstShoot1Trajectory);
 
@@ -273,7 +277,8 @@ public class BlueAutonSequences {
         // Aim first ring
         utilities.aimLauncher(BLUE_HIGH_SERVO);
         // Set flywheel power
-        utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
+//        utilities.flywheelVelocity(BLUE_HIGH_VELOCITY);
+        utilities.flywheelPower(BLUE_HIGH_POWER);
 
         // Trajectory to shooting position
         drive.followTrajectory(blueFirstShoot3Trajectory);
